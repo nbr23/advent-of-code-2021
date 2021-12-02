@@ -57,6 +57,6 @@ func StrListToIntList(input []string) []int64 {
 	return intlist
 }
 
-func GetInputInt64(day int64) []int64 {
-	return StrListToIntList(strings.Split(GetInput(day), "\n"))
+func InputToIntList(input string) []int64 {
+	return StrListToIntList(strings.Split(input, "\n"))
 }
