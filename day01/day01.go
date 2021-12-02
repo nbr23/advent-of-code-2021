@@ -15,11 +15,6 @@ func getIncreasedCount(input []int64) (increased int64) {
 	return increased
 }
 
-func part1() {
-	input := inputs.GetInputInt64("day01/input")
-	fmt.Printf("Result 1: %v\n", getIncreasedCount(input))
-}
-
 func sumSlice(slice []int64) (res int64) {
 	for _, v := range slice {
 		res += v
@@ -27,8 +22,13 @@ func sumSlice(slice []int64) (res int64) {
 	return res
 }
 
-func part2() {
-	input := inputs.GetInputInt64("day01/input")
+func part1(day int64) {
+	input := inputs.GetInputInt64(day)
+	fmt.Printf("Result 1: %v\n", getIncreasedCount(input))
+}
+
+func part2(day int64) {
+	input := inputs.GetInputInt64(day)
 	cumsums := make([]int64, 0, len(input))
 
 	for i := 0; i < len(input)-2; i++ {
@@ -38,6 +38,7 @@ func part2() {
 }
 
 func main() {
-	part1()
-	part2()
+	var day int64 = 1
+	part1(day)
+	part2(day)
 }
