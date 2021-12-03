@@ -10,6 +10,14 @@ import (
 	"strings"
 )
 
+func ParseDecInt(str string) (res int64) {
+	res, err := strconv.ParseInt(str, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
 func ReadFile(filename string) []byte {
 	data, err := os.ReadFile(filename)
 	if err != nil {
