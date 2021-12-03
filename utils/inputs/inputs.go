@@ -18,16 +18,12 @@ func ParseDecInt(str string) (res int64) {
 	return res
 }
 
-func ReadFile(filename string) []byte {
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		panic(fmt.Errorf("unable to open %s: %v", filename, err))
-	}
-	return data
-}
-
 func getToken() string {
-	return string(ReadFile("./.token"))
+	token, err := os.ReadFile("./.token")
+	if err != nil {
+		panic(err)
+	}
+	return string(token)
 }
 
 func GetInput(day int64) string {
