@@ -49,7 +49,7 @@ func GetInput(day int64) string {
 		log.Fatal(err)
 	}
 
-	return string(data)
+	return strings.Trim(string(data), "\n")
 }
 
 func StrListToIntList(input []string) []int64 {

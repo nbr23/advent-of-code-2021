@@ -75,7 +75,7 @@ func parseBoards(input string) (calls []int64, boards [][]int64) {
 	return calls, boards
 }
 
-func getWinnerBoard(calls []int64, boards [][]int64) (lastcalled int, winner []int64) {
+func getWinnerBoard(calls []int64, boards [][]int64) (lastcalledindex int, winner []int64) {
 	for i := range calls {
 		for _, board := range boards {
 			if isBoardWinner(calls[:i+1], board) {
@@ -103,8 +103,43 @@ func part1(input string) interface{} {
 	return calls[lastcalledindex] * sumWinnerBoard(winner, calls[:lastcalledindex+1])
 }
 
+func getBoardsWinning(called []int64, boards [][]int64, boards_index []int64) (winningboards []int64) {
+	for _, i := range boards_index {
+		if isBoardWinner(called, boards[i]) {
+			winningboards = append(winningboards, i)
+		}
+	}
+	return winningboards
+}
+
 func part2(input string) interface{} {
-	return nil
+	calls, boards := parseBoards(input)
+	var lastcalledindex = 0
+	var winner []int64 = nil
+
+	winningboards := []int64{}
+	for i := range boards {
+		winningboards = append(winningboards, int64(i))
+	}
+
+	for i := range calls {
+		new_winningboards := getBoardsWinning(calls[0:len(calls)-i], boards, winningboards)
+
+		if len(winningboards) != len(new_winningboards) {
+			for _, v := range winningboards {
+				if !inSlice(v, new_winningboards) {
+					lastcalledindex = len(calls) - i
+					winner = boards[v]
+					break
+				}
+			}
+		}
+		if winner != nil {
+			break
+		}
+		winningboards = new_winningboards
+	}
+	return calls[lastcalledindex] * sumWinnerBoard(winner, calls[:lastcalledindex+1])
 }
 
 func main() {
