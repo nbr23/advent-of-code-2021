@@ -35,6 +35,8 @@ func Solve(part1 Resolver, part2 Resolver, day int64) {
 		}
 	}
 
+	fmt.Printf("*** DAY %d ***\n", day)
+
 	res1 := part1(input)
 	fmt.Printf("Result 1: %v\n", res1)
 
