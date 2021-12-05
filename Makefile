@@ -1,3 +1,7 @@
+build:
+	@mkdir -p bin
+	@for day in $(shell ls | grep day) ; do go build -o bin/$${day} $${day}/$${day}.go ; done
+
 day:
 	@mkdir -p day`date +%d`
 	@mkdir -p inputs/test
@@ -10,9 +14,8 @@ day:
 		code day`date +%d`/day`date +%d`.go ; \
 	fi
 
-build:
-	@mkdir -p bin
-	@for day in $(shell ls | grep day) ; do go build -o bin/$${day} $${day}/$${day}.go ; done
-
 benchmark:
 	@time for day in $(shell ls bin/) ; do time bin/$${day} ; done
+
+clean:
+	rm -fv bin/*
