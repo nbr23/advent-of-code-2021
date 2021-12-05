@@ -12,21 +12,21 @@ type Resolver func(string) interface{}
 func Solve(part1 Resolver, part2 Resolver, day int64) {
 	var input string
 
-	test_input := flag.Bool("test", false, "If set, uses ./dayX/testinput.txt as input instead of the user specific input")
+	test_input := flag.Bool("test", false, "If set, uses ./inputs/test/dayX.txt as input instead of the user specific input")
 	flag.Parse()
 
 	if *test_input {
-		binput, err := os.ReadFile(fmt.Sprintf("./day%02d/testinput.txt", day))
+		binput, err := os.ReadFile(fmt.Sprintf("./inputs/test/day%02d.txt", day))
 		if err != nil {
 			panic(err)
 		}
 		input = string(binput)
 	} else {
-		binput, err := os.ReadFile(fmt.Sprintf("./day%02d/input.txt", day))
+		binput, err := os.ReadFile(fmt.Sprintf("./inputs/day%02d.txt", day))
 		if err != nil {
 			fmt.Println("Fetching input")
 			input = inputs.GetInput(day)
-			err := os.WriteFile(fmt.Sprintf("./day%02d/input.txt", day), []byte(input), 0700)
+			err := os.WriteFile(fmt.Sprintf("./inputs/day%02d.txt", day), []byte(input), 0700)
 			if err != nil {
 				fmt.Println(err)
 			}
