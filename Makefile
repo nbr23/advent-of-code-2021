@@ -6,3 +6,9 @@ day:
 		echo Created: day`date +%d`/day`date +%d`.go ; \
 		code day`date +%d`/day`date +%d`.go ; \
 	fi
+
+build:
+	@for day in $(shell ls | grep day) ; do go build -o bin/$${day} $${day}/$${day}.go ; done
+
+benchmark:
+	@time for day in $(shell ls bin/) ; do time bin/$${day} ; done
