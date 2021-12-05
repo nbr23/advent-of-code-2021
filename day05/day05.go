@@ -63,8 +63,51 @@ func part1(input string) interface{} {
 	return intersects
 }
 
+func plotPointsDiagonals(vectors []vector) (points map[point]int) {
+	points = make(map[point]int)
+	for _, v := range vectors {
+		if v.y1 == v.y2 {
+			for x := math.Min(float64(v.x1), float64(v.x2)); x <= math.Max(float64(v.x1), float64(v.x2)); x++ {
+				points[point{x: int64(x), y: v.y1}]++
+			}
+		} else if v.x1 == v.x2 {
+			for y := math.Min(float64(v.y1), float64(v.y2)); y <= math.Max(float64(v.y1), float64(v.y2)); y++ {
+				points[point{x: v.x1, y: int64(y)}]++
+			}
+		} else {
+			ax, ay := int64(1), int64(1)
+			x, y := v.x1, v.y1
+			if v.x1 > v.x2 {
+				ax = -1
+			}
+			if v.y1 > v.y2 {
+				ay = -1
+			}
+			for {
+				points[point{x: x, y: y}]++
+				if x == v.x2 && y == v.y2 {
+					break
+				}
+				x += ax
+				y += ay
+			}
+
+		}
+	}
+	return points
+}
+
 func part2(input string) interface{} {
-	return nil
+	vectors := getVectorsFromInput(input)
+	points := plotPointsDiagonals(vectors)
+	intersects := 0
+
+	for p := range points {
+		if points[p] > 1 {
+			intersects++
+		}
+	}
+	return intersects
 }
 
 func main() {
