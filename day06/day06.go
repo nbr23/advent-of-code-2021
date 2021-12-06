@@ -8,6 +8,12 @@ import (
 
 var COUNT_1 = 80
 var COUNT_2 = 256
+var CACHE = make(map[fishcache]int64)
+
+type fishcache struct{
+	fish int64
+	count int64
+}
 
 func inputToIntList(input string) (result []int64) {
 	input = strings.TrimSpace(strings.Trim(input, "\n"))
@@ -18,32 +24,14 @@ func inputToIntList(input string) (result []int64) {
 	return result
 }
 
-func iterateFishCycle(fish []int64) []int64 {
-	fish_count := len(fish)
-
-	for i := 0; i < fish_count; i++ {
-		if fish[i] == 0 {
-			fish[i] = 6
-			fish = append(fish, 8)
-		} else {
-			fish[i]--
-		}
-	}
-	return fish
-}
-
 func part1(input string) interface{} {
 	fish := inputToIntList(input)
+	fish_count := int64(len(fish))
 
-	for i := 0; i < COUNT_1; i++ {
-		fish = iterateFishCycle(fish)
+	for i := range fish {
+		fish_count += fishCycleRec(fish[i], int64(COUNT_1), CACHE)
 	}
-	return len(fish)
-}
-
-type fishcache struct{
-	fish int64
-	count int64
+	return fish_count
 }
 
 func fishCycleRec(fish int64, count int64, cache map[fishcache]int64) int64 {
@@ -68,10 +56,9 @@ func fishCycleRec(fish int64, count int64, cache map[fishcache]int64) int64 {
 func part2(input string) interface{} {
 	fish := inputToIntList(input)
 	fish_count := int64(len(fish))
-	cache :=  make(map[fishcache]int64)
 
 	for i := range fish {
-		fish_count += fishCycleRec(fish[i], int64(COUNT_2), cache)
+		fish_count += fishCycleRec(fish[i], int64(COUNT_2), CACHE)
 	}
 	return fish_count
 }
