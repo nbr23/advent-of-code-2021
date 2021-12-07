@@ -34,45 +34,53 @@ func getVectorsFromInput(input string) (vectors []vector) {
 	return vectors
 }
 
-func plotPoints(vectors []vector) (points map[point]int) {
-	points = make(map[point]int)
+//5145
+func plotPoints(vectors []vector) int {
+	intersects := 0
+	points := make(map[point]int)
 	for _, v := range vectors {
 		if v.y1 == v.y2 {
 			for x := math.Min(float64(v.x1), float64(v.x2)); x <= math.Max(float64(v.x1), float64(v.x2)); x++ {
 				points[point{x: int64(x), y: v.y1}]++
+				if points[point{x: int64(x), y: v.y1}] == 2 {
+					intersects++
+				}
 			}
 		} else if v.x1 == v.x2 {
 			for y := math.Min(float64(v.y1), float64(v.y2)); y <= math.Max(float64(v.y1), float64(v.y2)); y++ {
 				points[point{x: v.x1, y: int64(y)}]++
+				if points[point{x: v.x1, y: int64(y)}] == 2 {
+					intersects++
+				}
 			}
-		}
-	}
-	return points
-}
-
-func part1(input string) interface{} {
-	vectors := getVectorsFromInput(input)
-	points := plotPoints(vectors)
-	intersects := 0
-
-	for p := range points {
-		if points[p] > 1 {
-			intersects++
 		}
 	}
 	return intersects
 }
 
-func plotPointsDiagonals(vectors []vector) (points map[point]int) {
-	points = make(map[point]int)
+func part1(input string) interface{} {
+	vectors := getVectorsFromInput(input)
+
+	return plotPoints(vectors)
+}
+
+func plotPointsDiagonals(vectors []vector) int {
+	points := make(map[point]int)
+	intersects := 0
 	for _, v := range vectors {
 		if v.y1 == v.y2 {
 			for x := math.Min(float64(v.x1), float64(v.x2)); x <= math.Max(float64(v.x1), float64(v.x2)); x++ {
 				points[point{x: int64(x), y: v.y1}]++
+				if points[point{x: int64(x), y: v.y1}] == 2 {
+					intersects++
+				}
 			}
 		} else if v.x1 == v.x2 {
 			for y := math.Min(float64(v.y1), float64(v.y2)); y <= math.Max(float64(v.y1), float64(v.y2)); y++ {
 				points[point{x: v.x1, y: int64(y)}]++
+				if points[point{x: v.x1, y: int64(y)}] == 2 {
+					intersects++
+				}
 			}
 		} else {
 			ax, ay := int64(1), int64(1)
@@ -85,6 +93,9 @@ func plotPointsDiagonals(vectors []vector) (points map[point]int) {
 			}
 			for {
 				points[point{x: x, y: y}]++
+				if points[point{x: x, y: y}] == 2 {
+					intersects++
+				}
 				if x == v.x2 && y == v.y2 {
 					break
 				}
@@ -94,20 +105,12 @@ func plotPointsDiagonals(vectors []vector) (points map[point]int) {
 
 		}
 	}
-	return points
+	return intersects
 }
 
 func part2(input string) interface{} {
 	vectors := getVectorsFromInput(input)
-	points := plotPointsDiagonals(vectors)
-	intersects := 0
-
-	for p := range points {
-		if points[p] > 1 {
-			intersects++
-		}
-	}
-	return intersects
+	return plotPointsDiagonals(vectors)
 }
 
 func main() {
