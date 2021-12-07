@@ -58,7 +58,11 @@ func part2(input string) interface{} {
 	fish_count := int64(len(fish))
 
 	for i := range fish {
-		fish_count += fishCycleRec(fish[i], int64(COUNT_2), CACHE)
+		f := fishcache{fish: fish[i], count: int64(COUNT_2)}
+		if _, ok := CACHE[f]; !ok {
+			CACHE[f] = fishCycleRec(fish[i], int64(COUNT_2), CACHE)
+		}
+		fish_count += CACHE[f]
 	}
 	return fish_count
 }
