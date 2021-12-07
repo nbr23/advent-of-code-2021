@@ -1,3 +1,5 @@
+SHELL := /usr/bin/bash
+
 build:
 	@mkdir -p bin
 	@for day in $(shell ls | grep day) ; do go build -o bin/$${day} $${day}/$${day}.go ; done
