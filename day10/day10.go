@@ -72,6 +72,8 @@ func getCorrectScoreForLine(line string) int {
 		} else {
 			if pairs[c] == stack[len(stack)-1] {
 				stack = stack[:len(stack)-1]
+			} else {
+				return 0
 			}
 		}
 	}
@@ -84,8 +86,9 @@ func getCorrectScoreForLine(line string) int {
 func part2(input string) interface{} {
 	scores := make([]int, 0)
 	for _, line := range strings.Split(input, "\n") {
-		if getScoreForLine(line) == 0 {
-			scores = append(scores, getCorrectScoreForLine(line))
+		score := getCorrectScoreForLine(line)
+		if score != 0 {
+			scores = append(scores, score)
 		}
 	}
 	sort.Slice(scores, func(i, j int) bool { return scores[i] > scores[j] })
