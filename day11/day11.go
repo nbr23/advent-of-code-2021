@@ -3,13 +3,11 @@ package main
 import (
 	// "adventofcodego/utils/inputs"
 	"adventofcodego/utils/utils"
-	"fmt"
 	"math"
 )
 
 var HEIGHT int = 10
 var WIDTH int = 10
-var MATRIX []int = make([]int, 0)
 
 type point struct {
 	x int
@@ -66,20 +64,37 @@ func increaseEach(matrix *[]int) []point {
 func part1(input string) interface{} {
 	steps := 100
 	flash_count := 0
-	fillMatrix(&MATRIX, input)
-	fmt.Println(MATRIX)
+	matrix := make([]int, 0)
+	fillMatrix(&matrix, input)
+
 	for i := 0; i < steps; i++ {
-		willFlash := increaseEach(&MATRIX)
+		willFlash := increaseEach(&matrix)
 		flashed := make(map[point]bool)
 		for _, flasher := range willFlash {
-			flash_count += flashXY(&MATRIX, flashed, flasher.x, flasher.y)
+			flash_count += flashXY(&matrix, flashed, flasher.x, flasher.y)
 		}
 	}
 	return flash_count
 }
 
 func part2(input string) interface{} {
-	return nil
+	steps := 1000000
+	matrix := make([]int, 0)
+	fillMatrix(&matrix, input)
+
+	for i := 0; i < steps; i++ {
+		willFlash := increaseEach(&matrix)
+		flashed := make(map[point]bool)
+
+		for _, flasher := range willFlash {
+			flashXY(&matrix, flashed, flasher.x, flasher.y)
+		}
+
+		if len(flashed) == 100 {
+			return i + 1
+		}
+	}
+	return 0
 }
 
 func main() {
