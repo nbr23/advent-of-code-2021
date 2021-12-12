@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+var DAY int = 3
+
 func binToDec(binput []int64) (res int64) {
 	for _, c := range binput {
 		res = res << 1
@@ -76,7 +78,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 3
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

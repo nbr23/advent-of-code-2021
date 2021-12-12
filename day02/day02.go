@@ -7,6 +7,8 @@ import (
 	"adventofcodego/utils/utils"
 )
 
+var DAY int = 2
+
 func part1(input string) interface{} {
 	x, y := 0, 0
 	for _, s := range strings.Split(input, "\n") {
@@ -47,7 +49,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 2
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

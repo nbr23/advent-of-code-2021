@@ -6,12 +6,14 @@ import (
 	"strings"
 )
 
+var DAY int = 6
+
 var COUNT_1 = 80
 var COUNT_2 = 256
 var CACHE = make(map[fishcache]int64)
 
-type fishcache struct{
-	fish int64
+type fishcache struct {
+	fish  int64
 	count int64
 }
 
@@ -42,18 +44,18 @@ func fishCycleRec(fish int64, count int64, cache map[fishcache]int64) int64 {
 		return 0
 	}
 	if fish == 0 {
-		if _, ok := cache[fishcache{fish: 6, count: count-1}]; !ok {
-			cache[fishcache{fish: 6, count: count-1}] = fishCycleRec(6, count - 1, cache)
+		if _, ok := cache[fishcache{fish: 6, count: count - 1}]; !ok {
+			cache[fishcache{fish: 6, count: count - 1}] = fishCycleRec(6, count-1, cache)
 		}
-		if _, ok := cache[fishcache{fish: 8, count: count-1}]; !ok {
-			cache[fishcache{fish: 8, count: count-1}] = fishCycleRec(8, count - 1,cache)
+		if _, ok := cache[fishcache{fish: 8, count: count - 1}]; !ok {
+			cache[fishcache{fish: 8, count: count - 1}] = fishCycleRec(8, count-1, cache)
 		}
-		return 1 + cache[fishcache{fish: 6, count: count-1}] + cache[fishcache{fish: 8, count: count-1}]
+		return 1 + cache[fishcache{fish: 6, count: count - 1}] + cache[fishcache{fish: 8, count: count - 1}]
 	}
-	if _, ok := cache[fishcache{fish: 0, count: count-fish}]; !ok {
-		cache[fishcache{fish: 0, count: count-fish}] = fishCycleRec(0, count - fish, cache)
+	if _, ok := cache[fishcache{fish: 0, count: count - fish}]; !ok {
+		cache[fishcache{fish: 0, count: count - fish}] = fishCycleRec(0, count-fish, cache)
 	}
-	return cache[fishcache{fish: 0, count: count-fish}]
+	return cache[fishcache{fish: 0, count: count - fish}]
 }
 
 func part2(input string) interface{} {
@@ -67,7 +69,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 6
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

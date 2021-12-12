@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var DAY int = 12
+
 func makeLinks(input string) map[string][]string {
 	links := make(map[string][]string)
 	for _, line := range strings.Split(input, "\n") {
@@ -89,7 +91,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 12
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

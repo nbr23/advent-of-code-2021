@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var DAY int = 7
+
 func inputToIntList(input string) (result []int) {
 	input = strings.TrimSpace(strings.Trim(input, "\n"))
 
@@ -69,7 +71,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 7
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

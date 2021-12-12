@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+var DAY int = 9
+
 var HEIGHT int
 var WIDTH int
 
@@ -112,7 +114,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 9
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

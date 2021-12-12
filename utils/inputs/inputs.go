@@ -26,7 +26,7 @@ func getToken() string {
 	return string(token)
 }
 
-func GetInput(day int64) string {
+func GetInput(day int) string {
 	token := getToken()
 
 	client := http.Client{}

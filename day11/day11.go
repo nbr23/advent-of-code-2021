@@ -6,6 +6,8 @@ import (
 	"math"
 )
 
+var DAY int = 11
+
 var HEIGHT int = 10
 var WIDTH int = 10
 
@@ -98,7 +100,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 11
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

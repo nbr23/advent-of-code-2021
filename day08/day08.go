@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var DAY int = 8
+
 var DIGITS = []string{"abcefg", "cf", "acdeg", "acdfg", "bcdf", "abdfg", "abdefg", "acf", "abcdefg", "abcdfg"}
 
 func strSort(str string) string {
@@ -102,7 +104,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 8
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

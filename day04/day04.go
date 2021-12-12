@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var DAY int = 4
+
 var BOARD_SIZE int = 5
 
 func inSlice(value int64, slice []int64) bool {
@@ -143,7 +145,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 4
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

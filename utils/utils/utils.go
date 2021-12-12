@@ -9,7 +9,7 @@ import (
 
 type Resolver func(string) interface{}
 
-func Solve(part1 Resolver, part2 Resolver, day int64) {
+func Solve(part1 Resolver, part2 Resolver, day int) {
 	var input string
 
 	test_input := flag.Bool("test", false, "If set, uses ./inputs/test/dayX.txt as input instead of the user specific input")

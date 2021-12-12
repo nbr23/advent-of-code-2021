@@ -5,6 +5,8 @@ import (
 	"adventofcodego/utils/utils"
 )
 
+var DAY int = 1
+
 func getIncreasedCount(input []int64) (increased int64) {
 	for i, v := range input {
 		if i != 0 && v > input[i-1] {
@@ -37,7 +39,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 1
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

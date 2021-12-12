@@ -1,5 +1,7 @@
 package main
 
+var DAY int = DAYNUMBER
+
 import (
 	// "adventofcodego/utils/inputs"
 	"adventofcodego/utils/utils"
@@ -14,7 +16,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = DAYNUMBER
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }

@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var DAY int = 5
+
 type vector struct {
 	x1 int64
 	y1 int64
@@ -114,7 +116,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	var day int64 = 5
-
-	utils.Solve(part1, part2, day)
+	utils.Solve(part1, part2, DAY)
 }
