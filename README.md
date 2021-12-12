@@ -28,6 +28,18 @@ Fetches the personal input and writes to `./inputs/dayX.txt` if not already fetc
 
 ### Execute specific day over test input
 
-Requires the test input to be written in `./inputs/test/dayX.txt`.
+Requires the test input to be written in `./inputs/test/dayX/1/input.txt` and the solutions to part 1 and 2 in `./inputs/test/dayX/1/result_p1.txt`,`./inputs/test/dayX/1/result_p2.txt`.
 
-`./bin/dayX -test`
+If more than 1 test inputs exist for a problem, increment the `Y`  in `./inputs/test/dayX/Y/` and reproduce the same pattern as described above.
+
+Run tests on a defined day:
+
+`make testday DAY=01`
+
+For the current day:
+
+`make testday`
+
+### Execute tests over all days
+
+`make testall`
