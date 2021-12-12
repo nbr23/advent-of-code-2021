@@ -26,7 +26,7 @@ testday:
 	@go test day${DAY}/*.go  -v
 
 testall:
-	@for day in $(shell ls bin/) ; do echo TESTING $${day}; go test $${day}/*.go ; done
+	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test $${day}/*.go ; done
 
 benchmark:
 	@time for day in $(shell ls bin/) ; do time bin/$${day} ; done
