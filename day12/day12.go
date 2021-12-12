@@ -43,9 +43,7 @@ func followPath(links map[string][]string, visited []string, current string) int
 		if next == "start" {
 			continue
 		}
-		newvisited := make([]string, len(visited))
-		copy(newvisited, visited)
-		score += followPath(links, newvisited, next)
+		score += followPath(links, visited, next)
 	}
 	return score
 }
@@ -56,21 +54,19 @@ func part1(input string) interface{} {
 }
 
 func followPath2(links map[string][]string, visited []string, current string) int {
-	score := 0
 	if current == "end" {
 		return 1
 	}
+	score := 0
 	if current != "start" && strings.ToLower(current) == current {
 		visited_count := make(map[string]int)
+		var visited_twice string
 		for i := range visited {
 			if strings.ToLower(visited[i]) == visited[i] {
 				visited_count[visited[i]]++
-			}
-		}
-		var visited_twice string
-		for i := range visited_count {
-			if visited_count[i] >= 2 {
-				visited_twice = i
+				if visited_count[visited[i]] >= 2 {
+					visited_twice = visited[i]
+				}
 			}
 		}
 		if visited_twice != "" && visited_count[current] > 0 {
@@ -82,9 +78,7 @@ func followPath2(links map[string][]string, visited []string, current string) in
 		if next == "start" {
 			continue
 		}
-		newvisited := make([]string, len(visited))
-		copy(newvisited, visited)
-		score += followPath2(links, newvisited, next)
+		score += followPath2(links, visited, next)
 	}
 	return score
 }
