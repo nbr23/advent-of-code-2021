@@ -25,6 +25,7 @@ func parseInput(input string) (matrix dotmatrix, folds []point) {
 	matrix.dots = make([]point, 0)
 	folds = make([]point, 0)
 	parts := strings.Split(input, "\n\n")
+	fmt.Println(parts[1])
 
 	for _, d := range strings.Split(parts[0], "\n") {
 		coords := strings.Split(d, ",")
@@ -63,30 +64,29 @@ func foldOn(matrix dotmatrix, x int64, y int64) dotmatrix {
 		newmatrix.width = matrix.width
 		for _, dot := range matrix.dots {
 			if dot.y > y {
-				dot.y = matrix.height - dot.y
+				dot.y = (y*2 - dot.y)
 			}
 			if !dotExists(newmatrix, dot) {
 				newmatrix.dots = append(newmatrix.dots, dot)
 			}
 		}
-		newmatrix.height = matrix.height / 2
+		newmatrix.height = y
 	} else {
 		newmatrix.height = matrix.height
 		for _, dot := range matrix.dots {
 			if dot.x > x {
-				dot.x = matrix.width - dot.x
+				dot.x = (x*2 - dot.x)
 			}
 			if !dotExists(newmatrix, dot) {
 				newmatrix.dots = append(newmatrix.dots, dot)
 			}
 		}
-		newmatrix.width = matrix.width / 2
+		newmatrix.width = x
 	}
 	return newmatrix
 }
 
 func printMatrix(matrix dotmatrix) {
-	fmt.Println("PRINTING MATRIX")
 	for y := int64(0); y < matrix.height; y++ {
 		for x := int64(0); x < matrix.width; x++ {
 			if dotExists(matrix, point{x: x, y: y}) {
