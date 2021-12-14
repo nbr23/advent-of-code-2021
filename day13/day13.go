@@ -1,9 +1,10 @@
 package main
 
 import (
-	// "adventofcodego/utils/inputs"
+	"adventofcodego/utils/characters"
 	"adventofcodego/utils/inputs"
 	"adventofcodego/utils/utils"
+
 	"fmt"
 	"strings"
 )
@@ -25,7 +26,6 @@ func parseInput(input string) (matrix dotmatrix, folds []point) {
 	matrix.dots = make([]point, 0)
 	folds = make([]point, 0)
 	parts := strings.Split(input, "\n\n")
-	fmt.Println(parts[1])
 
 	for _, d := range strings.Split(parts[0], "\n") {
 		coords := strings.Split(d, ",")
@@ -99,6 +99,24 @@ func printMatrix(matrix dotmatrix) {
 	}
 }
 
+func (matrix dotmatrix) ToStrings() []string {
+	result := make([]string, matrix.width/5+1)
+
+	for y := int64(0); y < matrix.height; y++ {
+		for x := int64(0); x < matrix.width; x++ {
+			if dotExists(matrix, point{x: x, y: y}) {
+				result[x/5] = fmt.Sprintf("%sX", result[x/5])
+			} else {
+				result[x/5] = fmt.Sprintf("%s ", result[x/5])
+			}
+		}
+		for i := range result {
+			result[i] = fmt.Sprintf("%s\n", result[i])
+		}
+	}
+	return result
+}
+
 func part1(input string) interface{} {
 	matrix, folds := parseInput(input)
 	for _, fold := range folds {
@@ -108,13 +126,23 @@ func part1(input string) interface{} {
 	return len(matrix.dots)
 }
 
+func resultTochars(matrix dotmatrix) (result string) {
+	s := matrix.ToStrings()
+	for i := range s {
+		if _, ok := characters.CHARS[s[i]]; ok {
+			result = fmt.Sprintf("%s%s", result, string(characters.CHARS[s[i]]))
+		}
+	}
+	return result
+}
+
 func part2(input string) interface{} {
 	matrix, folds := parseInput(input)
 	for _, fold := range folds {
 		matrix = foldOn(matrix, fold.x, fold.y)
 	}
 	printMatrix(matrix)
-	return len(matrix.dots)
+	return resultTochars(matrix)
 }
 
 func main() {
