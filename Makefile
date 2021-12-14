@@ -10,8 +10,8 @@ day:
 	@mkdir -p inputs/test
 
 	@if ! [ -f day${DAY}/day${DAY}.go ]; then \
-		cat templates/template.go.tmpl | sed "s/DAYNUMBER/`echo ${DAY} | sed -E 's/^0//g'`/g" > day${DAY}/day${DAY}.go;\
-		cp templates/tests.go.tmpl day${DAY}/day${DAY}_test.go;\
+		cat templates/template.go.tmpl | sed "s/DAYNUMBER/$$(echo ${DAY} | sed -E 's/^0//g')/g" > day${DAY}/day${DAY}.go; \
+		cp templates/tests.go.tmpl day${DAY}/day${DAY}_test.go; \
 		echo Created: day${DAY}/day${DAY}.go ; \
 		mkdir -p inputs/test/day${DAY}/1 ;\
 		touch inputs/test/day${DAY}/1/input.txt ; \
