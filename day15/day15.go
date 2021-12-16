@@ -27,37 +27,22 @@ type pointlist struct {
 	value int
 }
 
-func (l *pointlist) insert(point point, val int) {
-	current := l
-	for {
-		if current.next == nil || val <= current.next.value {
-			current.next = &pointlist{next: current.next, point: point, value: val}
-			return
-		}
-		current = current.next
-	}
-}
-
 func (l *pointlist) insertOrAdd(point point, val int) {
 	current := l
+	var insert *pointlist
 	for {
-		if current.next == nil || val < current.next.value {
-			current.next = &pointlist{next: current.next, point: point, value: val}
+		if current.next == nil {
+			if insert == nil {
+				current.next = &pointlist{next: current.next, point: point, value: val}
+			} else {
+				insert.next = &pointlist{next: insert.next, point: point, value: val}
+			}
 			return
-		}
-		current = current.next
-	}
-}
-
-func (l *pointlist) updateValue(point point, val int) bool {
-	current := l
-	for {
-		if current == nil {
-			return false
-		}
-		if current.point == point {
+		} else if current.point == point {
 			current.value = val
-			return true
+			return
+		} else if val < current.next.value && insert == nil {
+			insert = current
 		}
 		current = current.next
 	}
@@ -105,7 +90,7 @@ func computeCosts(matrix []int, size int, costs []int, visited []bool, x int, y 
 	}
 }
 
-func Dijkstra(matrix []int, size int) map[point]int {
+func Dijkstra(matrix []int, size int) []int {
 	visited := make([]bool, HEIGHT*WIDTH*size*size)
 	current := point{0, 0}
 	costs := initCosts(size)
@@ -118,10 +103,8 @@ func Dijkstra(matrix []int, size int) map[point]int {
 				if nx == current.x && ny == current.y || nx != current.x && ny != current.y || visited[nx+ny*WIDTH*size] {
 					continue
 				}
-				costs[point{nx, ny}] = getMinCost(costs[point{nx, ny}], getCostXY(matrix, nx, ny)+costs[point{current.x, current.y}])
-				if !active_nodes.updateValue(point{nx, ny}, costs[point{nx, ny}]) {
-					active_nodes.insert(point{nx, ny}, costs[point{nx, ny}])
-				}
+				costs[nx+ny*WIDTH*size] = getMinCost(costs[nx+ny*WIDTH*size], getCostXY(matrix, nx, ny)+costs[current.x+current.y*WIDTH*size])
+				active_nodes.insertOrAdd(point{nx, ny}, costs[nx+ny*WIDTH*size])
 			}
 		}
 
@@ -156,14 +139,14 @@ func printCosts(matrix map[point]int, size int) {
 	}
 }
 
-func initCosts(size int) map[point]int {
-	costs := make(map[point]int)
+func initCosts(size int) []int {
+	costs := make([]int, HEIGHT*size*WIDTH*size)
 	for y := 0; y < HEIGHT*size; y++ {
 		for x := 0; x < WIDTH*size; x++ {
-			costs[point{x, y}] = math.MaxInt
+			costs[x+y*WIDTH*size] = math.MaxInt
 		}
 	}
-	costs[point{0, 0}] = 0
+	costs[0] = 0
 	return costs
 }
 
@@ -171,14 +154,14 @@ func part1(input string) interface{} {
 	size := 1
 	matrix := parseMatrix(input)
 	costs := Dijkstra(matrix, size)
-	return costs[point{WIDTH*size - 1, HEIGHT*size - 1}]
+	return costs[WIDTH*HEIGHT*size*size-1]
 }
 
 func part2(input string) interface{} {
 	size := 5
 	matrix := parseMatrix(input)
 	costs := Dijkstra(matrix, size)
-	return costs[point{WIDTH*size - 1, HEIGHT*size - 1}]
+	return costs[WIDTH*HEIGHT*size*size-1]
 }
 
 func main() {
