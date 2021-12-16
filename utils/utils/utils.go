@@ -6,6 +6,20 @@ import (
 	"os"
 )
 
+func IntMin(a int, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func IntMax(a int, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
 type Resolver func(string) interface{}
 
 func Solve(part1 Resolver, part2 Resolver, day int) {

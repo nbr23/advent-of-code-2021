@@ -4,7 +4,6 @@ import (
 	// "adventofcodego/utils/inputs"
 
 	"adventofcodego/utils/utils"
-	"fmt"
 	"math"
 	"strings"
 
@@ -69,41 +68,20 @@ func getMinCost(a, b int) int {
 	return a
 }
 
-func getCostXY(matrix []int, x int, y int) int {
-	cost := (matrix[(x%WIDTH)+(y%WIDTH)*WIDTH] + x/WIDTH + y/HEIGHT)
-	return cost%10 + cost/10
-}
-
-func computeCosts(matrix []int, size int, costs []int, visited []bool, x int, y int) {
-	if visited[len(visited)-1] {
-		return
-	}
-	visited[x+y*WIDTH*size] = true
-	for nx := int(math.Max(0, float64(x-1))); nx < int(math.Min(float64(WIDTH*size), float64(x+2))); nx++ {
-		for ny := int(math.Max(0, float64(y-1))); ny < int(math.Min(float64(HEIGHT*size), float64(y+2))); ny++ {
-			if nx == x && ny == y || nx != x && ny != y || visited[nx+ny*WIDTH*size] {
-				continue
-			}
-			costs[nx+ny*WIDTH*size] = getMinCost(costs[nx+ny*WIDTH*size], getCostXY(matrix, nx, ny)+costs[x+y*WIDTH*size])
-			computeCosts(matrix, size, costs, visited, nx, ny)
-		}
-	}
-}
-
 func Dijkstra(matrix []int, size int) []int {
 	visited := make([]bool, HEIGHT*WIDTH*size*size)
 	current := point{0, 0}
-	costs := initCosts(size)
+	costs, newmatrix := initCosts(size, matrix)
 
 	active_nodes := &pointlist{next: nil, point: point{0, 0}, value: 0}
 
 	for {
-		for nx := int(math.Max(0, float64(current.x-1))); nx < int(math.Min(float64(WIDTH*size), float64(current.x+2))); nx++ {
-			for ny := int(math.Max(0, float64(current.y-1))); ny < int(math.Min(float64(HEIGHT*size), float64(current.y+2))); ny++ {
+		for nx := utils.IntMax(0, current.x-1); nx < utils.IntMin(WIDTH*size, current.x+2); nx++ {
+			for ny := utils.IntMax(0, current.y-1); ny < utils.IntMin(HEIGHT*size, current.y+2); ny++ {
 				if nx == current.x && ny == current.y || nx != current.x && ny != current.y || visited[nx+ny*WIDTH*size] {
 					continue
 				}
-				costs[nx+ny*WIDTH*size] = getMinCost(costs[nx+ny*WIDTH*size], getCostXY(matrix, nx, ny)+costs[current.x+current.y*WIDTH*size])
+				costs[nx+ny*WIDTH*size] = getMinCost(costs[nx+ny*WIDTH*size], newmatrix[nx+ny*WIDTH*size]+costs[current.x+current.y*WIDTH*size])
 				active_nodes.insertOrAdd(point{nx, ny}, costs[nx+ny*WIDTH*size])
 			}
 		}
@@ -121,33 +99,18 @@ func Dijkstra(matrix []int, size int) []int {
 	return costs
 }
 
-func printMatrix(matrix []int, size int) {
-	for y := 0; y < HEIGHT*size; y++ {
-		for x := 0; x < WIDTH*size; x++ {
-			fmt.Printf("%v ", getCostXY(matrix, x, y))
-		}
-		fmt.Println()
-	}
-}
-
-func printCosts(matrix map[point]int, size int) {
-	for y := 0; y < HEIGHT*size; y++ {
-		for x := 0; x < WIDTH*size; x++ {
-			fmt.Printf("%d ", matrix[point{x, y}])
-		}
-		fmt.Println()
-	}
-}
-
-func initCosts(size int) []int {
+func initCosts(size int, matrix []int) ([]int, []int) {
 	costs := make([]int, HEIGHT*size*WIDTH*size)
+	newmatrix := make([]int, HEIGHT*size*WIDTH*size)
 	for y := 0; y < HEIGHT*size; y++ {
 		for x := 0; x < WIDTH*size; x++ {
 			costs[x+y*WIDTH*size] = math.MaxInt
+			v := (matrix[(x%WIDTH)+(y%WIDTH)*WIDTH] + x/WIDTH + y/HEIGHT)
+			newmatrix[x+y*WIDTH*size] = v%10 + v/10
 		}
 	}
 	costs[0] = 0
-	return costs
+	return costs, newmatrix
 }
 
 func part1(input string) interface{} {
