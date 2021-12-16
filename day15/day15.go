@@ -6,6 +6,7 @@ import (
 	"adventofcodego/utils/utils"
 	"math"
 	"strings"
+	//	"github.com/pkg/profile"
 )
 
 var DAY int = 15
@@ -120,5 +121,6 @@ func part2(input string) interface{} {
 }
 
 func main() {
+	//defer profile.Start().Stop()
 	utils.Solve(part1, part2, DAY)
 }

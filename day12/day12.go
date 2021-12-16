@@ -4,6 +4,7 @@ import (
 	// "adventofcodego/utils/inputs"
 	"adventofcodego/utils/utils"
 	"strings"
+	//	"github.com/pkg/profile"
 )
 
 var DAY int = 12
@@ -33,7 +34,7 @@ func followPath(links map[string][]string, visited []string, current string) int
 	if current == "end" {
 		return 1
 	}
-	if current != "start" && strings.ToLower(current) == current {
+	if current != "start" && current[0] >= 'a' {
 		for i := range visited {
 			if current == visited[i] {
 				return 0
@@ -60,11 +61,11 @@ func followPath2(links map[string][]string, visited []string, current string) in
 		return 1
 	}
 	score := 0
-	if current != "start" && strings.ToLower(current) == current {
+	if current != "start" && current[0] >= 'a' {
 		visited_count := make(map[string]int)
 		var visited_twice string
 		for i := range visited {
-			if strings.ToLower(visited[i]) == visited[i] {
+			if visited[i][0] >= 'a' {
 				visited_count[visited[i]]++
 				if visited_count[visited[i]] >= 2 {
 					visited_twice = visited[i]
@@ -91,5 +92,6 @@ func part2(input string) interface{} {
 }
 
 func main() {
+	//	defer profile.Start().Stop()
 	utils.Solve(part1, part2, DAY)
 }
