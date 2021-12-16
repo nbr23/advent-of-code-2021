@@ -64,7 +64,50 @@ func binToInt(bits []bool) int {
 	return value
 }
 
-func parsePacket(bits []bool) (int, int, int) {
+func operator(ptype int, values []int) int {
+	res := 0
+	switch ptype {
+	case 0:
+		res = values[0]
+		for i := 1; i < len(values); i++ {
+			res += values[i]
+		}
+	case 1:
+		res = values[0]
+		for i := 1; i < len(values); i++ {
+			res *= values[i]
+		}
+	case 2:
+		res = values[0]
+		for i := 1; i < len(values); i++ {
+			if values[i] < res {
+				res = values[i]
+			}
+		}
+	case 3:
+		res = values[0]
+		for i := 1; i < len(values); i++ {
+			if values[i] > res {
+				res = values[i]
+			}
+		}
+	case 5:
+		if values[0] > values[1] {
+			res = 1
+		}
+	case 6:
+		if values[0] < values[1] {
+			res = 1
+		}
+	case 7:
+		if values[0] == values[1] {
+			res = 1
+		}
+	}
+	return res
+}
+
+func parsePacket(bits []bool, compute bool) (int, int, int) {
 	i := 0
 	version := 0
 	ptype := 0
@@ -82,14 +125,15 @@ func parsePacket(bits []bool) (int, int, int) {
 		value, read = packetLiteral(bits[i:])
 		i += read
 	} else {
+		values := make([]int, 0)
 		if !bits[i] {
 			i++
 			bitlen := binToInt(bits[i : i+15])
 			i += 15
 			for j := 0; j < bitlen; {
-				vers, val, c := parsePacket(bits[i:])
+				vers, val, c := parsePacket(bits[i:], compute)
 				version += vers
-				value += val
+				values = append(values, val)
 				j += c
 				i += c
 			}
@@ -99,11 +143,14 @@ func parsePacket(bits []bool) (int, int, int) {
 			i += 11
 
 			for j := 0; j < packetcount; j++ {
-				vers, val, c := parsePacket(bits[i:])
+				vers, val, c := parsePacket(bits[i:], compute)
+				values = append(values, val)
 				version += vers
-				value += val
 				i += c
 			}
+		}
+		if compute {
+			value = operator(ptype, values)
 		}
 	}
 
@@ -112,12 +159,14 @@ func parsePacket(bits []bool) (int, int, int) {
 
 func part1(input string) interface{} {
 	bits := parseHex(input)
-	version, _, _ := parsePacket(bits)
+	version, _, _ := parsePacket(bits, false)
 	return version
 }
 
 func part2(input string) interface{} {
-	return nil
+	bits := parseHex(input)
+	_, value, _ := parsePacket(bits, true)
+	return value
 }
 
 func main() {
