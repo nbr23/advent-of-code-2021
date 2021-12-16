@@ -21,6 +21,48 @@ type point struct {
 	y int
 }
 
+type pointlist struct {
+	next  *pointlist
+	point point
+	value int
+}
+
+func (l *pointlist) insert(point point, val int) {
+	current := l
+	for {
+		if current.next == nil || val <= current.next.value {
+			current.next = &pointlist{next: current.next, point: point, value: val}
+			return
+		}
+		current = current.next
+	}
+}
+
+func (l *pointlist) insertOrAdd(point point, val int) {
+	current := l
+	for {
+		if current.next == nil || val < current.next.value {
+			current.next = &pointlist{next: current.next, point: point, value: val}
+			return
+		}
+		current = current.next
+	}
+}
+
+func (l *pointlist) updateValue(point point, val int) bool {
+	current := l
+	for {
+		if current == nil {
+			return false
+		}
+		if current.point == point {
+			current.value = val
+			return true
+		}
+		current = current.next
+	}
+}
+
 func parseMatrix(input string) []int {
 	lines := strings.Split(input, "\n")
 	WIDTH = len(lines[0])
@@ -64,12 +106,11 @@ func computeCosts(matrix []int, size int, costs []int, visited []bool, x int, y 
 }
 
 func Dijkstra(matrix []int, size int) map[point]int {
-	active_nodes := make(map[point]int)
 	visited := make([]bool, HEIGHT*WIDTH*size*size)
 	current := point{0, 0}
 	costs := initCosts(size)
 
-	active_nodes[point{0, 0}] = 0
+	active_nodes := &pointlist{next: nil, point: point{0, 0}, value: 0}
 
 	for {
 		for nx := int(math.Max(0, float64(current.x-1))); nx < int(math.Min(float64(WIDTH*size), float64(current.x+2))); nx++ {
@@ -78,36 +119,23 @@ func Dijkstra(matrix []int, size int) map[point]int {
 					continue
 				}
 				costs[point{nx, ny}] = getMinCost(costs[point{nx, ny}], getCostXY(matrix, nx, ny)+costs[point{current.x, current.y}])
-				active_nodes[point{nx, ny}] = costs[point{nx, ny}]
+				if !active_nodes.updateValue(point{nx, ny}, costs[point{nx, ny}]) {
+					active_nodes.insert(point{nx, ny}, costs[point{nx, ny}])
+				}
 			}
 		}
-
-		// remove from active nodes
-		delete(active_nodes, current)
 
 		// mark as visited
 		visited[current.x+current.y*WIDTH*size] = true
 
 		// search for next node
-		current = getNextNode(active_nodes, costs)
-		if len(active_nodes) == 0 || visited[WIDTH*size*HEIGHT*size-1] {
+		if active_nodes == nil || visited[WIDTH*size*HEIGHT*size-1] {
 			break
 		}
+		current = active_nodes.point
+		active_nodes = active_nodes.next
 	}
 	return costs
-}
-
-func getNextNode(active_nodes map[point]int, costs map[point]int) point {
-	minv := math.MaxInt
-	var current point
-	for pt := range active_nodes {
-		val := costs[pt]
-		if val < minv {
-			minv = val
-			current = point{pt.x, pt.y}
-		}
-	}
-	return current
 }
 
 func printMatrix(matrix []int, size int) {
