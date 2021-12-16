@@ -21,7 +21,7 @@ func inputToIntList(input string) (result []int64) {
 	input = strings.TrimSpace(strings.Trim(input, "\n"))
 
 	for _, i := range strings.Split(input, ",") {
-		result = append(result, inputs.ParseDecInt(i))
+		result = append(result, inputs.ParseDecInt64(i))
 	}
 	return result
 }

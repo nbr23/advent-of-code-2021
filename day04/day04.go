@@ -56,7 +56,7 @@ func parseBoards(input string) (calls []int64, boards [][]int64) {
 
 	calls = make([]int64, len(strcalls))
 	for i, v := range strcalls {
-		calls[i] = inputs.ParseDecInt(v)
+		calls[i] = inputs.ParseDecInt64(v)
 	}
 
 	boards = [][]int64{}
@@ -68,7 +68,7 @@ func parseBoards(input string) (calls []int64, boards [][]int64) {
 		} else {
 			for _, v := range strings.Split(str_inputs[i], " ") {
 				if len(v) > 0 {
-					boards[boardscount] = append(boards[boardscount], inputs.ParseDecInt(v))
+					boards[boardscount] = append(boards[boardscount], inputs.ParseDecInt64(v))
 				}
 			}
 		}

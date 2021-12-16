@@ -10,7 +10,15 @@ import (
 	"strings"
 )
 
-func ParseDecInt(str string) (res int64) {
+func ParseDecInt(str string) int {
+	res, err := strconv.ParseInt(str, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return int(res)
+}
+
+func ParseDecInt64(str string) int64 {
 	res, err := strconv.ParseInt(str, 10, 64)
 	if err != nil {
 		panic(err)

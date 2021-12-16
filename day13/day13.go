@@ -29,7 +29,7 @@ func parseInput(input string) (matrix dotmatrix, folds []point) {
 
 	for _, d := range strings.Split(parts[0], "\n") {
 		coords := strings.Split(d, ",")
-		dot := point{x: inputs.ParseDecInt(coords[0]), y: inputs.ParseDecInt(coords[1])}
+		dot := point{x: inputs.ParseDecInt64(coords[0]), y: inputs.ParseDecInt64(coords[1])}
 		matrix.dots = append(matrix.dots, dot)
 		if dot.x > matrix.width {
 			matrix.width = dot.x
@@ -41,9 +41,9 @@ func parseInput(input string) (matrix dotmatrix, folds []point) {
 	for _, d := range strings.Split(parts[1], "\n") {
 		operands := strings.Split(strings.Split(d, " ")[2], "=")
 		if operands[0] == "x" {
-			folds = append(folds, point{x: inputs.ParseDecInt(operands[1]), y: 0})
+			folds = append(folds, point{x: inputs.ParseDecInt64(operands[1]), y: 0})
 		} else {
-			folds = append(folds, point{y: inputs.ParseDecInt(operands[1]), x: 0})
+			folds = append(folds, point{y: inputs.ParseDecInt64(operands[1]), x: 0})
 		}
 	}
 	return matrix, folds
