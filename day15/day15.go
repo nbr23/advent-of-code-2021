@@ -6,8 +6,6 @@ import (
 	"adventofcodego/utils/utils"
 	"math"
 	"strings"
-
-	"github.com/pkg/profile"
 )
 
 var DAY int = 15
@@ -26,22 +24,12 @@ type pointlist struct {
 	value int
 }
 
-func (l *pointlist) insertOrAdd(point point, val int) {
+func (l *pointlist) insert(point point, val int) *pointlist {
 	current := l
-	var insert *pointlist
 	for {
-		if current.next == nil {
-			if insert == nil {
-				current.next = &pointlist{next: current.next, point: point, value: val}
-			} else {
-				insert.next = &pointlist{next: insert.next, point: point, value: val}
-			}
-			return
-		} else if current.point == point {
-			current.value = val
-			return
-		} else if val < current.next.value && insert == nil {
-			insert = current
+		if current.next == nil || val < current.next.value {
+			current.next = &pointlist{next: current.next, point: point, value: val}
+			return current.next
 		}
 		current = current.next
 	}
@@ -72,6 +60,7 @@ func Dijkstra(matrix []int, size int) []int {
 	visited := make([]bool, HEIGHT*WIDTH*size*size)
 	current := point{0, 0}
 	costs, newmatrix := initCosts(size, matrix)
+	listptrs := make([]*pointlist, HEIGHT*WIDTH*size*size)
 
 	active_nodes := &pointlist{next: nil, point: point{0, 0}, value: 0}
 
@@ -82,14 +71,17 @@ func Dijkstra(matrix []int, size int) []int {
 					continue
 				}
 				costs[nx+ny*WIDTH*size] = getMinCost(costs[nx+ny*WIDTH*size], newmatrix[nx+ny*WIDTH*size]+costs[current.x+current.y*WIDTH*size])
-				active_nodes.insertOrAdd(point{nx, ny}, costs[nx+ny*WIDTH*size])
+				if listptrs[nx+ny*WIDTH*size] == nil {
+					listptrs[nx+ny*WIDTH*size] = active_nodes.insert(point{nx, ny}, costs[nx+ny*WIDTH*size])
+				} else {
+					listptrs[nx+ny*WIDTH*size].value = costs[nx+ny*WIDTH*size]
+				}
 			}
 		}
 
 		// mark as visited
 		visited[current.x+current.y*WIDTH*size] = true
 
-		// search for next node
 		if active_nodes == nil || visited[WIDTH*size*HEIGHT*size-1] {
 			break
 		}
@@ -128,6 +120,5 @@ func part2(input string) interface{} {
 }
 
 func main() {
-	defer profile.Start().Stop()
 	utils.Solve(part1, part2, DAY)
 }
