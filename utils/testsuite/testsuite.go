@@ -24,8 +24,7 @@ func RunTestforPart(t *testing.T, part1 utils.Resolver, part2 utils.Resolver, pa
 			}
 			bresult, err := os.ReadFile(fmt.Sprintf("../inputs/test/day%02d/%s/result_p%d.txt", day, item.Name(), part))
 			if err != nil {
-				t.Logf("Test result not found %s\n", fmt.Sprintf("../inputs/test/day%02d/%s/result_p%d.txt", day, item.Name(), part))
-				t.Fail()
+				t.Logf("Test result not found %s\n", fmt.Sprintf("../inputs/test/day%02d/%s/result_p%d.txt: skipping…", day, item.Name(), part))
 				continue
 			}
 			if part == 1 {
