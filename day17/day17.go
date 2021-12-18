@@ -76,8 +76,8 @@ func part1(input string) interface{} {
 func part2(input string) interface{} {
 	target := parseTargetArea(input)
 	count := 0
-	for vx := -1000; vx < 1000; vx++ {
-		for vy := -1000; vy < 1000; vy++ {
+	for vx := 1; vx < 500; vx++ {
+		for vy := -500; vy < 500; vy++ {
 			sh := shootProbe(target, vx, vy)
 			if sh != math.MinInt {
 				count++

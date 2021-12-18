@@ -3,6 +3,7 @@ package main
 import (
 	// "adventofcodego/utils/inputs"
 	"adventofcodego/utils/utils"
+	//	"github.com/pkg/profile"
 )
 
 var DAY int = DAYNUMBER
@@ -16,5 +17,6 @@ func part2(input string) interface{} {
 }
 
 func main() {
+	// defer profile.Start().Stop()
 	utils.Solve(part1, part2, DAY)
 }

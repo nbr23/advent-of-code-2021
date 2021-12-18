@@ -3,7 +3,7 @@ DAY=`date +%d`
 
 build:
 	@mkdir -p bin
-	@for day in $(shell ls | grep day) ; do go build -o bin/$${day} $${day}/$${day}.go ; done
+	@for day in $(shell ls | grep -E "^day") ; do go build -o bin/$${day} $${day}/$${day}.go ; done
 
 day:
 	@mkdir -p day${DAY}
@@ -33,6 +33,11 @@ testallv:
 
 benchmark:
 	@time for day in $(shell ls bin/) ; do time bin/$${day} ; done
+
+profile:
+	@file=`go run day${DAY}/day${DAY}.go 2>&1 > /dev/null | grep "cpu profiling disabled" | grep -Eo "[^ ]+$$"` ; \
+		go tool pprof --pdf ./bin/day${DAY} $${file} > profile_day${DAY}.pdf ; \
+		evince profile_day${DAY}.pdf&
 
 clean:
 	rm -fv bin/*
