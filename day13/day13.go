@@ -141,7 +141,7 @@ func part2(input string) interface{} {
 	for _, fold := range folds {
 		matrix = foldOn(matrix, fold.x, fold.y)
 	}
-	printMatrix(matrix)
+	//printMatrix(matrix)
 	return resultTochars(matrix)
 }
 
