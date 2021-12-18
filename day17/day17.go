@@ -64,8 +64,8 @@ func shootProbe(target area, vx int, vy int) int {
 func part1(input string) interface{} {
 	target := parseTargetArea(input)
 	maxy := math.MinInt
-	for vx := 0; vx < 1000; vx++ {
-		for vy := 0; vy < 1000; vy++ {
+	for vx := 1; vx <= target.x2; vx++ {
+		for vy := target.y1; vy < 500; vy++ {
 			sh := shootProbe(target, vx, vy)
 			maxy = utils.IntMax(maxy, sh)
 		}
@@ -76,8 +76,8 @@ func part1(input string) interface{} {
 func part2(input string) interface{} {
 	target := parseTargetArea(input)
 	count := 0
-	for vx := 1; vx < 500; vx++ {
-		for vy := -500; vy < 500; vy++ {
+	for vx := 1; vx <= target.x2; vx++ {
+		for vy := target.y1; vy < 500; vy++ {
 			sh := shootProbe(target, vx, vy)
 			if sh != math.MinInt {
 				count++
