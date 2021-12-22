@@ -125,14 +125,14 @@ func normalizeOn(beacons []point, pt point) []point {
 	return newbeacons
 }
 
-func countCommonBeacons(a []point, b []point) (int, []point) {
+func countCommonBeacons(a []point, b []point) (int, []pair) {
 	res := 0
-	commonlist := make([]point, 0)
+	commonlist := make([]pair, 0)
 	for i := range a {
 		for j := range b {
 			if a[i] == b[j] {
 				res++
-				commonlist = append(commonlist, a[i])
+				commonlist = append(commonlist, pair{i, j})
 			}
 		}
 	}
@@ -161,9 +161,12 @@ func searchForBeacons(input string) int {
 	goodscannersindex := make(map[int]bool)
 	goodscannersindex[0] = true
 	goodscannerscount := 1
-	next := make([][]point, 1000)
-	nextnormalizer := make([]point, 1000)
+	next := make([][]point, len(scanners))
+	nextnormalizer := make([]point, len(scanners))
 	nextsize := 0
+
+	scanner_coords := make([]point, len(scanners))
+	scanner_coords[0] = point{0, 0, 0}
 
 	goodbeacons := make(map[point]bool)
 
@@ -177,7 +180,7 @@ func searchForBeacons(input string) int {
 				for _, rot := range getRotations(scanner2) {
 					for _, beacon2 := range rot {
 						normalized2 := normalizeOn(rot, beacon2)
-						if count, _ := countCommonBeacons(normalized, normalized2); count >= 12 {
+						if count, pairs := countCommonBeacons(normalized, normalized2); count >= 12 {
 							if _, ok := goodscannersindex[j]; !ok {
 								if len(goodbeacons) == 0 {
 									for _, b := range current_scanner {
@@ -185,12 +188,13 @@ func searchForBeacons(input string) int {
 									}
 									normalizer = point{0, 0, 0}
 								}
+								scanner_coords[j] = pointAdd(current_scanner[pairs[0].x], pointSub(normalizer, rot[pairs[0].y]))
 								goodscannersindex[j] = true
 								goodscannerscount++
 								i = j
 								goodscanners = append(goodscanners, normalized2)
 								next[nextsize] = normalized2
-								nextnormalizer[nextsize] = point{normalizer.x - beacon.x, normalizer.y - beacon.y, normalizer.z - beacon.z} //point{-beacon.x, -beacon.y, -beacon.z}
+								nextnormalizer[nextsize] = current_scanner[pairs[0].x]
 								nextsize++
 								for _, b := range normalizeOn(normalized2, point{normalizer.x - beacon.x, normalizer.y - beacon.y, normalizer.z - beacon.z}) {
 									goodbeacons[b] = true
