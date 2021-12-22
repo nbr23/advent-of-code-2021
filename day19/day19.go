@@ -146,7 +146,7 @@ func pointAdd(a point, b point) point {
 	return point{a.x + b.x, a.y + b.y, a.z + b.z}
 }
 
-func searchForBeacons(input string) int {
+func searchForBeacons(input string) (int, int) {
 	scanners := parseScanners(input)
 	scanners_rotated := make([][][]point, len(scanners))
 	for i, scanner := range scanners {
@@ -163,6 +163,8 @@ func searchForBeacons(input string) int {
 	goodscannerscount := 1
 	next := make([][]point, len(scanners))
 	nextnormalizer := make([]point, len(scanners))
+	nextcoordnormalizer := make([]point, len(scanners))
+	coordnormalizer := point{0, 0, 0}
 	nextsize := 0
 
 	scanner_coords := make([]point, len(scanners))
@@ -173,7 +175,8 @@ func searchForBeacons(input string) int {
 	for {
 		for _, beacon := range current_scanner {
 			normalized := normalizeOn(current_scanner, beacon)
-			for j, scanner2 := range scanners {
+			for j := range scanners {
+				scanner2 := scanners[j]
 				if i == j {
 					continue
 				}
@@ -188,17 +191,19 @@ func searchForBeacons(input string) int {
 									}
 									normalizer = point{0, 0, 0}
 								}
-								scanner_coords[j] = pointAdd(current_scanner[pairs[0].x], pointSub(normalizer, rot[pairs[0].y]))
+								scanner_coords[j] = pointAdd(current_scanner[pairs[0].x], pointSub(coordnormalizer, rot[pairs[0].y]))
 								goodscannersindex[j] = true
 								goodscannerscount++
 								i = j
 								goodscanners = append(goodscanners, normalized2)
 								next[nextsize] = normalized2
-								nextnormalizer[nextsize] = current_scanner[pairs[0].x]
+								nextcoordnormalizer[nextsize] = pointAdd(coordnormalizer, current_scanner[pairs[0].x])
+								nextnormalizer[nextsize] = point{normalizer.x - beacon.x, normalizer.y - beacon.y, normalizer.z - beacon.z}
 								nextsize++
 								for _, b := range normalizeOn(normalized2, point{normalizer.x - beacon.x, normalizer.y - beacon.y, normalizer.z - beacon.z}) {
 									goodbeacons[b] = true
 								}
+								j = 0
 							}
 						}
 					}
@@ -209,19 +214,19 @@ func searchForBeacons(input string) int {
 			nextsize--
 			current_scanner = next[nextsize]
 			normalizer = nextnormalizer[nextsize]
+			coordnormalizer = nextcoordnormalizer[nextsize]
 		}
 		if goodscannerscount == len(scanners) {
 			break
 		}
 	}
-
-	return len(goodbeacons)
+	return len(goodbeacons), getMaxManhattan(scanner_coords)
 }
 
 func getMaxManhattan(coords []point) int {
 	max := 0
-	for i, _ := range coords {
-		for j, _ := range coords {
+	for i := range coords {
+		for j := range coords {
 			if i == j {
 				continue
 			}
@@ -241,12 +246,16 @@ func abs(v int) int {
 	return -v
 }
 
+var P2 int
+
 func part1(input string) interface{} {
-	return searchForBeacons(input)
+	var p1 int
+	p1, P2 = searchForBeacons(input)
+	return p1
 }
 
 func part2(input string) interface{} {
-	return nil
+	return P2
 }
 
 func main() {
