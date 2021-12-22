@@ -12,6 +12,11 @@ import (
 
 var DAY int = 19
 
+type pair struct {
+	x int
+	y int
+}
+
 type point struct {
 	x int
 	y int
@@ -134,6 +139,13 @@ func countCommonBeacons(a []point, b []point) (int, []point) {
 	return res, commonlist
 }
 
+func pointSub(a point, b point) point {
+	return point{a.x - b.x, a.y - b.y, a.z - b.z}
+}
+func pointAdd(a point, b point) point {
+	return point{a.x + b.x, a.y + b.y, a.z + b.z}
+}
+
 func searchForBeacons(input string) int {
 	scanners := parseScanners(input)
 	scanners_rotated := make([][][]point, len(scanners))
@@ -200,6 +212,29 @@ func searchForBeacons(input string) int {
 	}
 
 	return len(goodbeacons)
+}
+
+func getMaxManhattan(coords []point) int {
+	max := 0
+	for i, _ := range coords {
+		for j, _ := range coords {
+			if i == j {
+				continue
+			}
+			man := abs(coords[i].x-coords[j].x) + abs(coords[i].y-coords[j].y) + abs(coords[i].z-coords[j].z)
+			if man > max {
+				max = man
+			}
+		}
+	}
+	return max
+}
+
+func abs(v int) int {
+	if v >= 0 {
+		return v
+	}
+	return -v
 }
 
 func part1(input string) interface{} {
