@@ -11,12 +11,6 @@ import (
 
 var DAY int = 22
 
-type point struct {
-	x int
-	y int
-	z int
-}
-
 type cube struct {
 	on bool
 	x1 int
@@ -27,38 +21,28 @@ type cube struct {
 	z2 int
 }
 
-func parseCubes(input []string) []cube {
+func parseCubes(input []string, bounds *cube) []cube {
 	cubes := make([]cube, len(input))
 	r, _ := regexp.Compile("([onf]+) x=([-0-9]+)..([-0-9]+),y=([-0-9]+)..([-0-9]+),z=([-0-9]+)..([-0-9]+)")
-	for i, s := range input {
+	for _, s := range input {
 		m := r.FindStringSubmatch(s)
 		on := m[1] == "on"
-		cubes[i] = cube{on, inputs.ParseDecInt(m[2]), inputs.ParseDecInt(m[3]), inputs.ParseDecInt(m[4]), inputs.ParseDecInt(m[5]), inputs.ParseDecInt(m[6]), inputs.ParseDecInt(m[7])}
+		if bounds != nil {
+			if inputs.ParseDecInt(m[2]) >= bounds.x1 && inputs.ParseDecInt(m[3]) <= bounds.x2 &&
+				inputs.ParseDecInt(m[4]) >= bounds.y1 && inputs.ParseDecInt(m[5]) <= bounds.y2 &&
+				inputs.ParseDecInt(m[6]) >= bounds.z1 && inputs.ParseDecInt(m[7]) <= bounds.z2 {
+				cubes = append(cubes, cube{on, inputs.ParseDecInt(m[2]), inputs.ParseDecInt(m[3]), inputs.ParseDecInt(m[4]), inputs.ParseDecInt(m[5]), inputs.ParseDecInt(m[6]), inputs.ParseDecInt(m[7])})
+			}
+		} else {
+			cubes = append(cubes, cube{on, inputs.ParseDecInt(m[2]), inputs.ParseDecInt(m[3]), inputs.ParseDecInt(m[4]), inputs.ParseDecInt(m[5]), inputs.ParseDecInt(m[6]), inputs.ParseDecInt(m[7])})
+		}
 	}
 	return cubes
 }
 
-func processCubeInit(c cube, litpoints map[point]bool) {
-	for x := utils.IntMax(-50, c.x1); x <= utils.IntMin(50, c.x2); x++ {
-		for y := utils.IntMax(-50, c.y1); y <= utils.IntMin(50, c.y2); y++ {
-			for z := utils.IntMax(-50, c.z1); z <= utils.IntMin(50, c.z2); z++ {
-				if c.on {
-					litpoints[point{x, y, z}] = true
-				} else {
-					delete(litpoints, point{x, y, z})
-				}
-			}
-		}
-	}
-}
-
 func part1(input string) interface{} {
-	cubes := parseCubes(strings.Split(input, "\n"))
-	litpoints := make(map[point]bool)
-	for _, c := range cubes {
-		processCubeInit(c, litpoints)
-	}
-	return len(litpoints)
+	cubes := parseCubes(strings.Split(input, "\n"), &cube{false, -50, 50, -50, 50, -50, 50})
+	return processCubes(cubes)
 }
 
 func intersection(c1 cube, c2 cube) (cube, bool) {
@@ -110,7 +94,7 @@ func processCubes(cubes []cube) int {
 }
 
 func part2(input string) interface{} {
-	cubes := parseCubes(strings.Split(input, "\n"))
+	cubes := parseCubes(strings.Split(input, "\n"), nil)
 	return processCubes(cubes)
 }
 
