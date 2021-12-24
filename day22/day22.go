@@ -38,7 +38,7 @@ func parseCubes(input []string) []cube {
 	return cubes
 }
 
-func processCube(c cube, litpoints map[point]bool) {
+func processCubeInit(c cube, litpoints map[point]bool) {
 	for x := utils.IntMax(-50, c.x1); x <= utils.IntMin(50, c.x2); x++ {
 		for y := utils.IntMax(-50, c.y1); y <= utils.IntMin(50, c.y2); y++ {
 			for z := utils.IntMax(-50, c.z1); z <= utils.IntMin(50, c.z2); z++ {
@@ -53,16 +53,65 @@ func processCube(c cube, litpoints map[point]bool) {
 }
 
 func part1(input string) interface{} {
-	litpoints := make(map[point]bool)
 	cubes := parseCubes(strings.Split(input, "\n"))
+	litpoints := make(map[point]bool)
 	for _, c := range cubes {
-		processCube(c, litpoints)
+		processCubeInit(c, litpoints)
 	}
 	return len(litpoints)
 }
 
+func intersection(c1 cube, c2 cube) (cube, bool) {
+	newon := c1.on
+	if c1.on == c2.on {
+		newon = !c1.on
+	} else if !c2.on {
+		newon = true
+	}
+	if utils.IntMax(c1.x1, c2.x1) <= utils.IntMin(c1.x2, c2.x2) &&
+		utils.IntMax(c1.y1, c2.y1) <= utils.IntMin(c1.y2, c2.y2) &&
+		utils.IntMax(c1.z1, c2.z1) <= utils.IntMin(c1.z2, c2.z2) {
+		return cube{newon,
+			utils.IntMax(c1.x1, c2.x1), utils.IntMin(c1.x2, c2.x2),
+			utils.IntMax(c1.y1, c2.y1), utils.IntMin(c1.y2, c2.y2),
+			utils.IntMax(c1.z1, c2.z1), utils.IntMin(c1.z2, c2.z2)}, true
+	}
+	return cube{}, false
+}
+
+func cubeSize(c cube) int {
+	if c.on {
+		return (c.x2 - c.x1 + 1) * (c.y2 - c.y1 + 1) * (c.z2 - c.z1 + 1)
+	}
+	return -(c.x2 - c.x1 + 1) * (c.y2 - c.y1 + 1) * (c.z2 - c.z1 + 1)
+}
+
+func processCubes(cubes []cube) int {
+	intersections := make([]cube, 0)
+	for i := 0; i < len(cubes); i++ {
+		newinter := make([]cube, 0)
+		for j := range intersections {
+			inter, ok := intersection(cubes[i], intersections[j])
+			if ok {
+				newinter = append(newinter, inter)
+			}
+		}
+		if cubes[i].on {
+			intersections = append(intersections, cubes[i])
+		}
+		intersections = append(intersections, newinter...)
+	}
+
+	total := 0
+	for _, inter := range intersections {
+		total += cubeSize(inter)
+	}
+	return total
+}
+
 func part2(input string) interface{} {
-	return nil
+	cubes := parseCubes(strings.Split(input, "\n"))
+	return processCubes(cubes)
 }
 
 func main() {
