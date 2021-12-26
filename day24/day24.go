@@ -127,18 +127,18 @@ func execBlock(block []instruction, curst state) state {
 	return curst
 }
 
-func tryCombination(blocks [][]instruction, index int, z int, initmin int, initmax int, cache map[cacheobj]bool) (string, bool) {
+func tryCombination(blocks [][]instruction, index int, z int, iterations []int, cache map[cacheobj]bool) (string, bool) {
 	if index == len(blocks) {
 		return "", z == 0
 	}
 
-	for i := initmax; i >= initmin; i-- {
+	for _, i := range iterations {
 		var newz int
 
 		newz = execBlock(blocks[index], state{"w": i, "x": 0, "y": 0, "z": z})["z"]
 
 		if _, ok := cache[cacheobj{index + 1, i, newz}]; !ok {
-			res, found := tryCombination(blocks, index+1, newz, 1, 9, cache)
+			res, found := tryCombination(blocks, index+1, newz, iterations, cache)
 			if found {
 				return fmt.Sprintf("%d%s", i, res), true
 			} else {
@@ -152,17 +152,26 @@ func tryCombination(blocks [][]instruction, index int, z int, initmin int, initm
 func part1(input string) interface{} {
 	blocks := getInstructionBlocks(input)
 
-	for i := 9; i > 0; i-- {
-		cache := make(map[cacheobj]bool)
-		res, found := tryCombination(blocks, 0, 0, i, i, cache)
-		if found {
-			return res
-		}
+	iterations := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
+
+	cache := make(map[cacheobj]bool)
+	res, found := tryCombination(blocks, 0, 0, iterations, cache)
+	if found {
+		return res
 	}
 	return nil
 }
 
 func part2(input string) interface{} {
+	blocks := getInstructionBlocks(input)
+
+	iterations := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	cache := make(map[cacheobj]bool)
+	res, found := tryCombination(blocks, 0, 0, iterations, cache)
+	if found {
+		return res
+	}
 	return nil
 }
 
