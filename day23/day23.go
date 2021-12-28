@@ -132,15 +132,15 @@ func isProperRoom(element int, x int, y int) bool {
 }
 
 func isFinalPosition(element int, x int, y int, pods []int) bool {
-
-	return y == 2 && (x == 2 && element == Amber ||
-		x == 4 && element == Bronze ||
-		x == 6 && element == Copper ||
-		x == 8 && element == Desert) ||
-		y == 1 && (x == 2 && element == Amber ||
-			x == 4 && element == Bronze ||
-			x == 6 && element == Copper ||
-			x == 8 && element == Desert) && podAt(x, 2, pods) == element
+	if !isProperRoom(element, x, y) {
+		return false
+	}
+	for py := HEIGHT - 1; py > y; py-- {
+		if element != podAt(x, py, pods) {
+			return false
+		}
+	}
+	return true
 }
 
 type State struct {
@@ -294,6 +294,7 @@ func part1(input string) interface{} {
 
 func part2(input string) interface{} {
 	HEIGHT = 5
+	PODSCOUNT = 16
 	return nil
 }
 
