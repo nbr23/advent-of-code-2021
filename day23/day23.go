@@ -29,10 +29,9 @@ type Pod struct {
 	element int
 }
 
-type Move struct {
+type State struct {
+	pods []int
 	cost int
-	x    int
-	y    int
 }
 
 func parsePods(input string) []int {
@@ -141,11 +140,6 @@ func isFinalPosition(element int, x int, y int, pods []int) bool {
 		}
 	}
 	return true
-}
-
-type State struct {
-	pods []int
-	cost int
 }
 
 func getAvailableYPositionInRoom(roomx int, pods []int) int {
