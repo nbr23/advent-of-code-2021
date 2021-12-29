@@ -148,6 +148,18 @@ type State struct {
 	cost int
 }
 
+func getAvailableYPositionInRoom(roomx int, pods []int) int {
+	for y := HEIGHT - 1; y > 0; y-- {
+		elt := podAt(roomx, y, pods)
+		if elt == 0 {
+			return y
+		} else if !isProperRoom(elt, roomx, y) {
+			return -1
+		}
+	}
+	return -1
+}
+
 func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *int) []State {
 	moves := make([]State, 0)
 	current_element := podAt(podx, pody, pods)
@@ -155,16 +167,10 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 	// Currently in the hallway
 	if !isRoom(podx, pody) {
 		roomx := getRoomX(current_element)
-		p1 := podAt(roomx, 1, pods)
-		p2 := podAt(roomx, 2, pods)
+		newy := getAvailableYPositionInRoom(roomx, pods)
 
-		// The room is empty or contains one element already in the right place
-		if p2 == 0 || (p2 == current_element && p1 == 0) {
-			// We need to go left
-			newy := 1
-			if p2 == 0 {
-				newy = 2
-			}
+		// The room is empty or contains elements already in the right place
+		if newy != -1 {
 			if roomx < podx {
 				freeway := true
 				for x := podx - 1; x >= roomx; x-- {
@@ -202,8 +208,11 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 			}
 		}
 	} else { // In a room
-		if podAt(podx, pody-1, pods) != 0 {
-			return moves
+		// Check if there's something above us
+		for y := pody - 1; y > 0; y-- {
+			if podAt(podx, y, pods) != 0 {
+				return moves
+			}
 		}
 
 		// Check left
@@ -263,7 +272,6 @@ func playStep(state State, solution *int) {
 	if len(arrived) == PODSCOUNT {
 		if state.cost < *solution {
 			*solution = state.cost
-			fmt.Println(*solution)
 		}
 		return
 	}
@@ -275,8 +283,7 @@ func playStep(state State, solution *int) {
 			}
 
 			if podAt(x, y, state.pods) != 0 {
-				moves := getPossibleMoves(x, y, state.pods, state.cost, solution)
-				for _, move := range moves {
+				for _, move := range getPossibleMoves(x, y, state.pods, state.cost, solution) {
 					playStep(move, solution)
 				}
 			}
@@ -286,7 +293,6 @@ func playStep(state State, solution *int) {
 
 func part1(input string) interface{} {
 	pods := parsePods(input)
-	printPods(State{pods: pods, cost: 0})
 	solution := math.MaxInt
 	playStep(State{pods, 0}, &solution)
 	return solution
@@ -295,7 +301,19 @@ func part1(input string) interface{} {
 func part2(input string) interface{} {
 	HEIGHT = 5
 	PODSCOUNT = 16
-	return nil
+
+	pods := parsePods(input)
+	insert1 := []int{1000, 100, 10, 1}
+	insert2 := []int{1000, 10, 1, 100}
+	for x := 1; x <= 4; x++ {
+		pods[x*2+4*WIDTH] = pods[x*2+2*WIDTH]
+		pods[x*2+2*WIDTH] = insert1[x-1]
+		pods[x*2+3*WIDTH] = insert2[x-1]
+	}
+
+	solution := math.MaxInt
+	playStep(State{pods, 0}, &solution)
+	return solution
 }
 
 func main() {
