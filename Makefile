@@ -23,7 +23,7 @@ day:
 
 testday:
 	@echo RUNNING TESTS FOR DAY ${DAY}
-	@go test day${DAY}/*.go  -v
+	@go test day${DAY}/*.go  -v -timeout 0
 
 testall:
 	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test $${day}/*.go ; done
