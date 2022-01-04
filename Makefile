@@ -1,6 +1,6 @@
 SHELL := bash
 DAY=`date +%d`
-TIMEOUT=30m
+TIMEOUT=120m
 
 build:
 	@mkdir -p bin
