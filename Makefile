@@ -1,5 +1,6 @@
 SHELL := bash
 DAY=`date +%d`
+TIMEOUT=10m
 
 build:
 	@mkdir -p bin
@@ -26,10 +27,10 @@ testday:
 	@go test day${DAY}/*.go  -v -timeout 0
 
 testall:
-	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -timeout 0 $${day}/*.go ; done
+	@RC=0; for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -timeout ${TIMEOUT} $${day}/*.go ; RET=$$?; if [ $$RET != 0 ]; then RC=$$RET; fi; done; exit $$RC
 
 testallv:
-	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -v -timeout 0 $${day}/*.go ; done
+	@RC=0; for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -v -timeout ${TIMEOUT} $${day}/*.go ; RET=$$?; if [ $$RET != 0 ]; then RC=$$RET; fi; done; exit $$RC
 
 benchmark:
 	@time for day in $(shell ls bin/) ; do time bin/$${day} ; done
