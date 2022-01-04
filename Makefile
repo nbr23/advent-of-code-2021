@@ -26,10 +26,10 @@ testday:
 	@go test day${DAY}/*.go  -v -timeout 0
 
 testall:
-	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test $${day}/*.go ; done
+	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -timeout 0 $${day}/*.go ; done
 
 testallv:
-	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -v $${day}/*.go ; done
+	@for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -v -timeout 0 $${day}/*.go ; done
 
 benchmark:
 	@time for day in $(shell ls bin/) ; do time bin/$${day} ; done
