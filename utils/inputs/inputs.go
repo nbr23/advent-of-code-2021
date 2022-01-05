@@ -26,7 +26,7 @@ func ParseDecInt64(str string) int64 {
 	return res
 }
 
-func getToken() string {
+func GetToken() string {
 	token, err := os.ReadFile("./.token")
 	if err != nil {
 		panic(err)
@@ -34,8 +34,7 @@ func getToken() string {
 	return string(token)
 }
 
-func GetInput(day int) string {
-	token := getToken()
+func GetInput(day int, token string) string {
 
 	client := http.Client{}
 

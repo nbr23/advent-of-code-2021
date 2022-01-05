@@ -2,6 +2,7 @@ package utils
 
 import (
 	"adventofcodego/utils/inputs"
+	"flag"
 	"fmt"
 	"os"
 )
@@ -24,11 +25,21 @@ type Resolver func(string) interface{}
 
 func Solve(part1 Resolver, part2 Resolver, day int) {
 	var input string
+	token_arg := flag.String("token", "", "Authentication token to retrieve the puzzle input. If not set, will look for it in the file ./.token")
+	force_fetch_input := flag.Bool("fetch_input", false, "Force fetching of the input. Will overwrite existing input file")
+	flag.Parse()
 
 	binput, err := os.ReadFile(fmt.Sprintf("./inputs/day%02d.txt", day))
-	if err != nil {
+
+	if err != nil || *force_fetch_input {
+		var token string
 		fmt.Println("Fetching input")
-		input = inputs.GetInput(day)
+		if token_arg == nil || len(*token_arg) == 0 {
+			token = inputs.GetToken()
+		} else {
+			token = *token_arg
+		}
+		input = inputs.GetInput(day, token)
 		err := os.WriteFile(fmt.Sprintf("./inputs/day%02d.txt", day), []byte(input), 0700)
 		if err != nil {
 			fmt.Println(err)
