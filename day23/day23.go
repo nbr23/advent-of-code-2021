@@ -101,10 +101,6 @@ func getCost(letter byte) int {
 	panic(fmt.Errorf("Unknown element %s", string(letter)))
 }
 
-func isRoom(x, y int) bool {
-	return y > 0 && (x == 2 || x == 4 || x == 6 || x == 8)
-}
-
 func getRoomX(element int) int {
 	switch element {
 	case Amber:
@@ -159,7 +155,7 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 	current_element := podAt(podx, pody, pods)
 
 	// Currently in the hallway
-	if !isRoom(podx, pody) {
+	if pody == 0 {
 		roomx := getRoomX(current_element)
 		newy := getAvailableYPositionInRoom(roomx, pods)
 
@@ -212,7 +208,7 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 		// Check left
 		for x := podx - 1; x >= 0; x-- {
 			// if we're in front of a room, we skip
-			if isRoom(x, 1) {
+			if x%2 == 0 && x >= 2 {
 				continue
 			}
 			if podAt(x, 0, pods) == 0 {
@@ -231,7 +227,7 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 		// Check right
 		for x := podx + 1; x <= 10; x++ {
 			// if we're in front of a room, we skip
-			if isRoom(x, 1) {
+			if x%2 == 0 && x <= 8 {
 				continue
 			}
 			if podAt(x, 0, pods) == 0 {
@@ -257,8 +253,9 @@ func playStep(state State, solution *int) {
 	arrived := make(map[Pod]bool)
 	for y := 0; y < HEIGHT; y++ {
 		for x := 0; x < WIDTH; x++ {
-			if isFinalPosition(podAt(x, y, state.pods), x, y, state.pods) {
-				arrived[Pod{x: x, y: y, element: podAt(x, y, state.pods)}] = true
+			element := podAt(x, y, state.pods)
+			if isFinalPosition(element, x, y, state.pods) {
+				arrived[Pod{x: x, y: y, element: element}] = true
 			}
 		}
 	}
@@ -272,11 +269,12 @@ func playStep(state State, solution *int) {
 
 	for y := 0; y < HEIGHT; y++ {
 		for x := 0; x < WIDTH; x++ {
-			if _, exists := arrived[Pod{x: x, y: y, element: podAt(x, y, state.pods)}]; exists {
+			element := podAt(x, y, state.pods)
+			if _, exists := arrived[Pod{x: x, y: y, element: element}]; exists {
 				continue
 			}
 
-			if podAt(x, y, state.pods) != 0 {
+			if element != 0 {
 				for _, move := range getPossibleMoves(x, y, state.pods, state.cost, solution) {
 					playStep(move, solution)
 				}
