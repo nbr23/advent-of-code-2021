@@ -23,6 +23,15 @@ pipeline {
                 }
             }
         }
+        stage('Run Benchmark on real input') {
+            steps {
+                withCredentials([string(credentialsId: 'aoc_token', variable: 'AOC_AUTH_TOKEN')]) {
+                    withEnv(['PATH+EXTRA=/usr/local/go/bin']) {
+                        sh 'make benchmark TOKEN=$AOC_AUTH_TOKEN'
+                    }
+                }
+            }
+        }
     }
 
     post {
