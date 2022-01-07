@@ -3,6 +3,7 @@ DAY=`date +%d`
 TIMEOUT=120m
 TOKEN=''
 TIMESTAMP=`date +%s`
+PDF_VIEWER=''
 
 build:
 	@mkdir -p bin
@@ -42,7 +43,7 @@ profile:
 	@file=`go run day${DAY}/day${DAY}.go 2>&1 | grep "cpu profiling disabled" | grep -Eo "[^ ]+$$"` ; \
 		go tool pprof --pdf ./bin/day${DAY} $${file} > profiles/profile_day${DAY}_${TIMESTAMP}.pdf ; \
 		echo profiles/profile_day${DAY}_${TIMESTAMP}.pdf; \
-		evince profiles/profile_day${DAY}_${TIMESTAMP}.pdf&
+		if [ ${PDF_VIEWER} != '' ]; then (${PDF_VIEWER} profiles/profile_day${DAY}_${TIMESTAMP}.pdf&); fi
 
 clean:
 	rm -fv bin/*
