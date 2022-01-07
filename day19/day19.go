@@ -178,21 +178,21 @@ func pointAdd(a point, b point) point {
 
 func searchForBeacons(input string) (int, int) {
 	scanners := parseScanners(input)
+	scanners_count := len(scanners)
 
 	i := 0
-	current_scanner := scanners[i]
+	current_scanner := scanners[0]
 	normalizer := point{0, 0, 0}
-	goodscanners := [][]point{current_scanner}
-	goodscannersindex := make(map[int]bool)
+	goodscannersindex := make([]bool, scanners_count)
 	goodscannersindex[0] = true
 	goodscannerscount := 1
-	next := make([][]point, len(scanners))
-	nextnormalizer := make([]point, len(scanners))
-	nextcoordnormalizer := make([]point, len(scanners))
+	next := make([][]point, scanners_count)
+	nextnormalizer := make([]point, scanners_count)
+	nextcoordnormalizer := make([]point, scanners_count)
 	coordnormalizer := point{0, 0, 0}
 	nextsize := 0
 
-	scanner_coords := make([]point, len(scanners))
+	scanner_coords := make([]point, scanners_count)
 	scanner_coords[0] = point{0, 0, 0}
 
 	goodbeacons := make(map[point]bool)
@@ -209,7 +209,7 @@ func searchForBeacons(input string) (int, int) {
 					for _, beacon2 := range rot {
 						normalized2 := normalizeOn(rot, beacon2)
 						if count, pairs := countCommonBeacons(normalized, normalized2); count >= 12 {
-							if _, ok := goodscannersindex[j]; !ok {
+							if !goodscannersindex[j] {
 								if len(goodbeacons) == 0 {
 									for _, b := range current_scanner {
 										goodbeacons[b] = true
@@ -220,7 +220,6 @@ func searchForBeacons(input string) (int, int) {
 								goodscannersindex[j] = true
 								goodscannerscount++
 								i = j
-								goodscanners = append(goodscanners, normalized2)
 								next[nextsize] = normalized2
 								nextcoordnormalizer[nextsize] = pointAdd(coordnormalizer, current_scanner[pairs[0].x])
 								nextnormalizer[nextsize] = point{normalizer.x - beacon.x, normalizer.y - beacon.y, normalizer.z - beacon.z}
@@ -241,7 +240,7 @@ func searchForBeacons(input string) (int, int) {
 			normalizer = nextnormalizer[nextsize]
 			coordnormalizer = nextcoordnormalizer[nextsize]
 		}
-		if goodscannerscount == len(scanners) {
+		if goodscannerscount == scanners_count {
 			break
 		}
 	}
