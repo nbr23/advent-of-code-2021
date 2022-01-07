@@ -3,7 +3,6 @@ package inputs
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -40,20 +39,20 @@ func GetInput(day int, token string) string {
 
 	request, err := http.NewRequest("GET", fmt.Sprintf("https://adventofcode.com/2021/day/%d/input", day), nil)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	request.Header.Add("Cookie", fmt.Sprintf("session=%s", token))
 
 	resp, err := client.Do(request)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	defer resp.Body.Close()
 
 	data, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	return strings.Trim(string(data), "\n")
