@@ -55,33 +55,43 @@ var ROTATIONS = [][]int{
 	{90, 180, 180},
 }
 
-var ANGLES = map[int]angle{
-	0:   {cosinus: 1, sinus: 0},
-	90:  {cosinus: 0, sinus: 1},
-	180: {cosinus: -1, sinus: 0},
-	270: {cosinus: 0, sinus: -1},
+func getCosSin(angle int) (int, int) {
+	switch angle {
+	case 0:
+		return 1, 0
+	case 90:
+		return 0, 1
+	case 180:
+		return -1, 0
+	case 270:
+		return 0, -1
+	}
+	panic(fmt.Errorf("Unsupported angle %d", angle))
 }
 
 func rotateX(pt point, theta int) point {
+	cos, sin := getCosSin(theta)
 	return point{
 		x: pt.x,
-		y: pt.y*ANGLES[theta].cosinus - pt.z*ANGLES[theta].sinus,
-		z: pt.y*ANGLES[theta].sinus + pt.z*ANGLES[theta].cosinus,
+		y: pt.y*cos - pt.z*sin,
+		z: pt.y*sin + pt.z*cos,
 	}
 }
 
 func rotateY(pt point, theta int) point {
+	cos, sin := getCosSin(theta)
 	return point{
-		x: pt.x*ANGLES[theta].cosinus + pt.z*ANGLES[theta].sinus,
+		x: pt.x*cos + pt.z*sin,
 		y: pt.y,
-		z: pt.z*ANGLES[theta].cosinus - pt.x*ANGLES[theta].sinus,
+		z: pt.z*cos - pt.x*sin,
 	}
 }
 
 func rotateZ(pt point, theta int) point {
+	cos, sin := getCosSin(theta)
 	return point{
-		x: pt.x*ANGLES[theta].cosinus - pt.y*ANGLES[theta].sinus,
-		y: pt.x*ANGLES[theta].sinus + pt.y*ANGLES[theta].cosinus,
+		x: pt.x*cos - pt.y*sin,
+		y: pt.x*sin + pt.y*cos,
 		z: pt.z,
 	}
 }
@@ -168,16 +178,11 @@ func pointAdd(a point, b point) point {
 
 func searchForBeacons(input string) (int, int) {
 	scanners := parseScanners(input)
-	scanners_rotated := make([][][]point, len(scanners))
-	for i, scanner := range scanners {
-		scanners_rotated[i] = getRotations(scanner)
-	}
 
 	i := 0
 	current_scanner := scanners[i]
 	normalizer := point{0, 0, 0}
-	goodscanners := make([][]point, 0)
-	goodscanners = append(goodscanners, current_scanner)
+	goodscanners := [][]point{current_scanner}
 	goodscannersindex := make(map[int]bool)
 	goodscannersindex[0] = true
 	goodscannerscount := 1
