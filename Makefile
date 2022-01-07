@@ -2,6 +2,7 @@ SHELL := bash
 DAY=`date +%d`
 TIMEOUT=120m
 TOKEN=''
+TIMESTAMP=`date +%s`
 
 build:
 	@mkdir -p bin
@@ -37,9 +38,11 @@ benchmark:
 	@if [ ${TOKEN} != '' ]; then time for day in $(shell ls bin/) ; do time bin/$${day} -token ${TOKEN} ; done; else time for day in $(shell ls bin/) ; do time bin/$${day}; done; fi
 
 profile:
-	@file=`go run day${DAY}/day${DAY}.go 2>&1 > /dev/null | grep "cpu profiling disabled" | grep -Eo "[^ ]+$$"` ; \
-		go tool pprof --pdf ./bin/day${DAY} $${file} > profile_day${DAY}.pdf ; \
-		evince profile_day${DAY}.pdf&
+	@mkdir -p profiles
+	@file=`go run day${DAY}/day${DAY}.go 2>&1 | grep "cpu profiling disabled" | grep -Eo "[^ ]+$$"` ; \
+		go tool pprof --pdf ./bin/day${DAY} $${file} > profiles/profile_day${DAY}_${TIMESTAMP}.pdf ; \
+		echo profiles/profile_day${DAY}_${TIMESTAMP}.pdf; \
+		evince profiles/profile_day${DAY}_${TIMESTAMP}.pdf&
 
 clean:
 	rm -fv bin/*
