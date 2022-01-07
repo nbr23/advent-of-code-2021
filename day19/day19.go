@@ -180,6 +180,8 @@ func searchForBeacons(input string) (int, int) {
 	scanners := parseScanners(input)
 	scanners_count := len(scanners)
 
+	max_manhattan := 0
+
 	i := 0
 	current_scanner := scanners[0]
 	normalizer := point{0, 0, 0}
@@ -216,7 +218,8 @@ func searchForBeacons(input string) (int, int) {
 									}
 									normalizer = point{0, 0, 0}
 								}
-								scanner_coords[j] = pointAdd(current_scanner[pairs[0].x], pointSub(coordnormalizer, rot[pairs[0].y]))
+								scanner_coords[goodscannerscount] = pointAdd(current_scanner[pairs[0].x], pointSub(coordnormalizer, rot[pairs[0].y]))
+								max_manhattan = utils.IntMax(max_manhattan, getMaxManhattan(scanner_coords[goodscannerscount], scanner_coords[0:goodscannerscount]))
 								goodscannersindex[j] = true
 								goodscannerscount++
 								i = j
@@ -244,20 +247,15 @@ func searchForBeacons(input string) (int, int) {
 			break
 		}
 	}
-	return len(goodbeacons), getMaxManhattan(scanner_coords)
+	return len(goodbeacons), max_manhattan
 }
 
-func getMaxManhattan(coords []point) int {
+func getMaxManhattan(p point, coords []point) int {
 	max := 0
 	for i := range coords {
-		for j := range coords {
-			if i == j {
-				continue
-			}
-			man := abs(coords[i].x-coords[j].x) + abs(coords[i].y-coords[j].y) + abs(coords[i].z-coords[j].z)
-			if man > max {
-				max = man
-			}
+		man := abs(p.x-coords[i].x) + abs(p.y-coords[i].y) + abs(p.z-coords[i].z)
+		if man > max {
+			max = man
 		}
 	}
 	return max
