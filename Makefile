@@ -5,7 +5,7 @@ TOKEN=''
 
 build:
 	@mkdir -p bin
-	@for day in $(shell ls | grep -E "^day") ; do go build -o bin/$${day} $${day}/$${day}.go ; done
+	@for day in $(shell ls | grep -E "^day") ; do go build -trimpath -o bin/$${day} $${day}/$${day}.go ; done
 
 day:
 	@mkdir -p day${DAY}
