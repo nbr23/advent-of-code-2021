@@ -162,9 +162,10 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 		// The room is empty or contains elements already in the right place
 		if newy != -1 {
 			if roomx < podx {
+				// Check if an element is on our way
 				freeway := true
 				for x := podx - 1; x >= roomx; x-- {
-					if podAt(x, 0, pods) != 0 {
+					if pods[x] != 0 {
 						freeway = false
 						break
 					}
@@ -179,9 +180,10 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 					}
 				}
 			} else { // We need to go right
+				// Check if an element is on our way
 				freeway := true
 				for x := podx + 1; x <= roomx; x++ {
-					if podAt(x, 0, pods) != 0 {
+					if pods[x] != 0 {
 						freeway = false
 						break
 					}
@@ -211,16 +213,16 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 			if x%2 == 0 && x >= 2 {
 				continue
 			}
-			if podAt(x, 0, pods) == 0 {
-				if cost_acc+(pody+podx-x)*current_element < *solution {
-					newpods := make([]int, WIDTH*HEIGHT)
-					copy(newpods, pods)
-					newpods[podx+pody*WIDTH] = 0
-					newpods[x] = current_element
-					moves = append(moves, State{pods: newpods, cost: cost_acc + (pody+podx-x)*current_element})
-				}
-			} else {
+			// An element on our way, we cannot go further
+			if pods[x] != 0 {
 				break
+			}
+			if cost_acc+(pody+podx-x)*current_element < *solution {
+				newpods := make([]int, WIDTH*HEIGHT)
+				copy(newpods, pods)
+				newpods[podx+pody*WIDTH] = 0
+				newpods[x] = current_element
+				moves = append(moves, State{pods: newpods, cost: cost_acc + (pody+podx-x)*current_element})
 			}
 		}
 
@@ -230,16 +232,16 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 			if x%2 == 0 && x <= 8 {
 				continue
 			}
-			if podAt(x, 0, pods) == 0 {
-				if cost_acc+(pody+x-podx)*current_element < *solution {
-					newpods := make([]int, WIDTH*HEIGHT)
-					copy(newpods, pods)
-					newpods[podx+pody*WIDTH] = 0
-					newpods[x] = current_element
-					moves = append(moves, State{pods: newpods, cost: cost_acc + (pody+x-podx)*current_element})
-				}
-			} else {
+			// An element on our way, we cannot go further
+			if pods[x] != 0 {
 				break
+			}
+			if cost_acc+(pody+x-podx)*current_element < *solution {
+				newpods := make([]int, WIDTH*HEIGHT)
+				copy(newpods, pods)
+				newpods[podx+pody*WIDTH] = 0
+				newpods[x] = current_element
+				moves = append(moves, State{pods: newpods, cost: cost_acc + (pody+x-podx)*current_element})
 			}
 		}
 	}
@@ -250,12 +252,12 @@ func playStep(state State, solution *int) {
 	if state.cost >= *solution {
 		return
 	}
-	arrived := make(map[Pod]bool)
+	arrived := make(map[int]bool)
 	for y := 0; y < HEIGHT; y++ {
 		for x := 0; x < WIDTH; x++ {
 			element := podAt(x, y, state.pods)
 			if isFinalPosition(element, x, y, state.pods) {
-				arrived[Pod{x: x, y: y, element: element}] = true
+				arrived[element*HEIGHT*WIDTH+x+y*WIDTH] = true
 			}
 		}
 	}
@@ -270,7 +272,7 @@ func playStep(state State, solution *int) {
 	for y := 0; y < HEIGHT; y++ {
 		for x := 0; x < WIDTH; x++ {
 			element := podAt(x, y, state.pods)
-			if _, exists := arrived[Pod{x: x, y: y, element: element}]; exists {
+			if _, exists := arrived[element*HEIGHT*WIDTH+x+y*WIDTH]; exists {
 				continue
 			}
 
