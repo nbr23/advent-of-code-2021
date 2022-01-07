@@ -1,6 +1,7 @@
 SHELL := bash
 DAY=`date +%d`
 TIMEOUT=120m
+TOKEN=''
 
 build:
 	@mkdir -p bin
@@ -33,7 +34,7 @@ testallv:
 	@RC=0; for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -v -timeout ${TIMEOUT} $${day}/*.go ; RET=$$?; if [ $$RET != 0 ]; then RC=$$RET; fi; done; exit $$RC
 
 benchmark:
-	@time for day in $(shell ls bin/) ; do time bin/$${day} ; done
+	@if [ ${TOKEN} != '' ]; then time for day in $(shell ls bin/) ; do time bin/$${day} -token ${TOKEN} ; done; else time for day in $(shell ls bin/) ; do time bin/$${day}; done; fi
 
 profile:
 	@file=`go run day${DAY}/day${DAY}.go 2>&1 > /dev/null | grep "cpu profiling disabled" | grep -Eo "[^ ]+$$"` ; \
