@@ -28,6 +28,33 @@ type angle struct {
 	cosinus int
 }
 
+var ROTATIONS = [][]int{
+	{0, 0, 0},
+	{0, 0, 90},
+	{0, 0, 180},
+	{0, 0, 270},
+	{0, 90, 270},
+	{0, 90, 0},
+	{0, 90, 90},
+	{0, 90, 180},
+	{0, 180, 270},
+	{0, 180, 0},
+	{0, 180, 90},
+	{0, 180, 180},
+	{0, 270, 0},
+	{0, 270, 90},
+	{0, 270, 180},
+	{0, 270, 270},
+	{90, 0, 180},
+	{90, 0, 270},
+	{90, 0, 0},
+	{90, 0, 90},
+	{90, 180, 270},
+	{90, 180, 0},
+	{90, 180, 90},
+	{90, 180, 180},
+}
+
 var ANGLES = map[int]angle{
 	0:   {cosinus: 1, sinus: 0},
 	90:  {cosinus: 0, sinus: 1},
@@ -82,21 +109,14 @@ func parseScanners(input string) [][]point {
 }
 
 func getRotations(scanner []point) [][]point {
-	rotations := make([][]point, 0)
-	i := 0
-	for aX := range ANGLES {
-		for aY := range ANGLES {
-			for aZ := range ANGLES {
-				newrot := make([]point, 0)
-				for _, beacon := range scanner {
-					newrot = append(newrot, rotateZ(rotateY(rotateX(beacon, aX), aY), aZ))
-				}
-				if !rotationExists(rotations, newrot) {
-					rotations = append(rotations, newrot)
-					i++
-				}
-			}
+	rotations := make([][]point, 24)
+	for i, rot := range ROTATIONS {
+		aX, aY, aZ := rot[0], rot[1], rot[2]
+		newrot := make([]point, len(scanner))
+		for j, beacon := range scanner {
+			newrot[j] = rotateZ(rotateY(rotateX(beacon, aX), aY), aZ)
 		}
+		rotations[i] = newrot
 	}
 	return rotations
 }
