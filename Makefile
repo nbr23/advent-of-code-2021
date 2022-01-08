@@ -39,7 +39,7 @@ benchmark:
 
 profile:
 	@mkdir -p profiles
-	@file=`TIMESTAMP=(date +s); go run day${DAY}/day${DAY}.go 2>&1 | grep "cpu profiling disabled" | grep -Eo "[^ ]+$$"` ; \
+	@TIMESTAMP=`date +%s`; file=`go run day${DAY}/day${DAY}.go 2>&1 | grep "cpu profiling disabled" | grep -Eo "[^ ]+$$"` ; \
 		go tool pprof --pdf ./bin/day${DAY} $${file} > profiles/profile_day${DAY}_$${TIMESTAMP}.pdf ; \
 		echo profiles/profile_day${DAY}_$${TIMESTAMP}.pdf; \
 		if [ ${PDF_VIEWER} != '' ]; then (${PDF_VIEWER} `pwd`/profiles/profile_day${DAY}_$${TIMESTAMP}.pdf&); fi
