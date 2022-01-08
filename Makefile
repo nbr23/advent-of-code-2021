@@ -2,7 +2,6 @@ SHELL := bash
 DAY=`date +%d`
 TIMEOUT=120m
 TOKEN=''
-TIMESTAMP=`date +%s`
 PDF_VIEWER=''
 
 build:
