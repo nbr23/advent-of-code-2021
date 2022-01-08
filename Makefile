@@ -35,7 +35,7 @@ testallv:
 	@RC=0; for day in $(shell ls inputs/test/) ; do echo TESTING $${day}; go test -v -timeout ${TIMEOUT} $${day}/*.go ; RET=$$?; if [ $$RET != 0 ]; then RC=$$RET; fi; done; exit $$RC
 
 benchmark:
-	@if [ ${TOKEN} != '' ]; then time for day in $(shell ls bin/) ; do time bin/$${day} -token ${TOKEN} ; done; else time for day in $(shell ls bin/) ; do time bin/$${day}; done; fi
+	@if [ ${TOKEN} != '' ]; then time for day in $(shell ls bin/) ; do go build -trimpath -o bin/$${day} $${day}/$${day}.go && time bin/$${day} -token ${TOKEN} ; done; else time for day in $(shell ls bin/) ; do time bin/$${day}; done; fi
 
 profile:
 	@mkdir -p profiles
@@ -45,4 +45,4 @@ profile:
 		if [ ${PDF_VIEWER} != '' ]; then (${PDF_VIEWER} `pwd`/profiles/profile_day${DAY}_$${TIMESTAMP}.pdf&); fi
 
 clean:
-	rm -fv bin/*
+	rm -fv bin/* profiles/*
