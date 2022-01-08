@@ -244,17 +244,19 @@ func playStep(state State, solution *int) {
 	if state.cost >= *solution {
 		return
 	}
-	arrived := make(map[int]bool)
+	arrived := make([]bool, PODSCOUNT, PODSCOUNT)
+	arrived_count := 0
 	for y := 0; y < HEIGHT; y++ {
 		for x := 0; x < WIDTH; x++ {
 			element := podAt(x, y, state.pods)
 			if y > 0 && isFinalPosition(element, x, y, state.pods) {
-				arrived[x+y*WIDTH] = true
+				arrived[x/2-1+(y-1)*4] = true
+				arrived_count++
 			}
 		}
 	}
 
-	if len(arrived) == PODSCOUNT {
+	if arrived_count == PODSCOUNT {
 		if state.cost < *solution {
 			*solution = state.cost
 		}
@@ -264,7 +266,7 @@ func playStep(state State, solution *int) {
 	for y := 0; y < HEIGHT; y++ {
 		for x := 0; x < WIDTH; x++ {
 			element := podAt(x, y, state.pods)
-			if _, exists := arrived[x+y*WIDTH]; exists {
+			if idx := x/2 - 1 + (y-1)*4; idx >= 0 && idx < PODSCOUNT && arrived[idx] {
 				continue
 			}
 
