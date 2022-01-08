@@ -12,7 +12,14 @@ import (
 
 var DAY int = 24
 
-type state map[byte]int
+const (
+	W = 0
+	X = 1
+	Y = 2
+	Z = 3
+)
+
+type state []int
 
 type Operator func(operand, operand, *state)
 
@@ -96,7 +103,7 @@ type operand struct {
 
 func stringToOperand(s string) operand {
 	if isVar(s[0]) {
-		return operand{true, 0, s[0]}
+		return operand{true, 0, s[0] - 'w'}
 	} else {
 		return operand{false, inputs.ParseDecInt(s), 0}
 	}
@@ -149,7 +156,7 @@ func tryCombination(blocks [][]instruction, index int, z int, iterations []int, 
 	for _, i := range iterations {
 		var newz int
 
-		newz = execBlock(blocks[index], state{'w': i, 'x': 0, 'y': 0, 'z': z})['z']
+		newz = execBlock(blocks[index], state{i, 0, 0, z})[Z]
 
 		if _, ok := cache[cacheobj{index + 1, i, newz}]; !ok {
 			res, found := tryCombination(blocks, index+1, newz, iterations, cache)
