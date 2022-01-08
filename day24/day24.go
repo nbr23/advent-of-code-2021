@@ -12,9 +12,9 @@ import (
 
 var DAY int = 24
 
-type state map[string]int
+type state map[byte]int
 
-type Operator func(string, string, *state)
+type Operator func(operand, operand, *state)
 
 func getOp(op string) Operator {
 	switch op {
@@ -32,60 +32,74 @@ func getOp(op string) Operator {
 	return nil
 }
 
-func isVar(s string) bool {
-	return s == "w" || s == "x" || s == "y" || s == "z"
+func isVar(s byte) bool {
+	return s == 'w' || s == 'x' || s == 'y' || s == 'z'
 }
 
-func mul(a, b string, st *state) {
-	if isVar(b) {
-		(*st)[a] = (*st)[a] * (*st)[b]
+func mul(a, b operand, st *state) {
+	if b.isvar {
+		(*st)[a.varname] = (*st)[a.varname] * (*st)[b.varname]
 	} else {
-		(*st)[a] = (*st)[a] * inputs.ParseDecInt(b)
+		(*st)[a.varname] = (*st)[a.varname] * b.intval
 	}
 }
 
-func add(a, b string, st *state) {
-	if isVar(b) {
-		(*st)[a] = (*st)[a] + (*st)[b]
+func add(a, b operand, st *state) {
+	if b.isvar {
+		(*st)[a.varname] = (*st)[a.varname] + (*st)[b.varname]
 	} else {
-		(*st)[a] = (*st)[a] + inputs.ParseDecInt(b)
+		(*st)[a.varname] = (*st)[a.varname] + b.intval
 	}
 }
 
-func div(a, b string, st *state) {
-	if isVar(b) {
-		(*st)[a] = (*st)[a] / (*st)[b]
+func div(a, b operand, st *state) {
+	if b.isvar {
+		(*st)[a.varname] = (*st)[a.varname] / (*st)[b.varname]
 	} else {
-		(*st)[a] = (*st)[a] / inputs.ParseDecInt(b)
+		(*st)[a.varname] = (*st)[a.varname] / b.intval
 	}
 }
 
-func mod(a, b string, st *state) {
-	if isVar(b) {
-		(*st)[a] = (*st)[a] % (*st)[b]
+func mod(a, b operand, st *state) {
+	if b.isvar {
+		(*st)[a.varname] = (*st)[a.varname] % (*st)[b.varname]
 	} else {
-		(*st)[a] = (*st)[a] % inputs.ParseDecInt(b)
+		(*st)[a.varname] = (*st)[a.varname] % b.intval
 	}
 }
 
-func eql(a, b string, st *state) {
+func eql(a, b operand, st *state) {
 	vb := 0
-	if isVar(b) {
-		vb = (*st)[b]
+	if b.isvar {
+		vb = (*st)[b.varname]
 	} else {
-		vb = inputs.ParseDecInt(b)
+		vb = b.intval
 	}
-	if vb == (*st)[a] {
-		(*st)[a] = 1
+	if vb == (*st)[a.varname] {
+		(*st)[a.varname] = 1
 	} else {
-		(*st)[a] = 0
+		(*st)[a.varname] = 0
 	}
 }
 
 type instruction struct {
 	op string
-	a  string
-	b  string
+	a  operand
+	b  operand
+}
+
+type operand struct {
+	isvar   bool
+	intval  int
+	varname byte
+}
+
+func stringToOperand(s string) operand {
+	if isVar(s[0]) {
+		return operand{true, 0, s[0]}
+	} else {
+		return operand{false, inputs.ParseDecInt(s), 0}
+	}
 }
 
 func parseInstructions(input string) []instruction {
@@ -95,7 +109,7 @@ func parseInstructions(input string) []instruction {
 			continue
 		}
 		sp := strings.Split(s, " ")
-		instructions = append(instructions, instruction{op: sp[0], a: sp[1], b: sp[2]})
+		instructions = append(instructions, instruction{op: sp[0], a: stringToOperand(sp[1]), b: stringToOperand(sp[2])})
 	}
 	return instructions
 }
@@ -135,7 +149,7 @@ func tryCombination(blocks [][]instruction, index int, z int, iterations []int, 
 	for _, i := range iterations {
 		var newz int
 
-		newz = execBlock(blocks[index], state{"w": i, "x": 0, "y": 0, "z": z})["z"]
+		newz = execBlock(blocks[index], state{'w': i, 'x': 0, 'y': 0, 'z': z})['z']
 
 		if _, ok := cache[cacheobj{index + 1, i, newz}]; !ok {
 			res, found := tryCombination(blocks, index+1, newz, iterations, cache)
