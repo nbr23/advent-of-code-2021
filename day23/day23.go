@@ -120,14 +120,14 @@ func podAt(x int, y int, pods []int) int {
 }
 
 func isProperRoom(element int, x int, y int) bool {
-	return element != 0 && (x == 2 && element == Amber ||
+	return (x == 2 && element == Amber ||
 		x == 4 && element == Bronze ||
 		x == 6 && element == Copper ||
 		x == 8 && element == Desert)
 }
 
 func isFinalPosition(element int, x int, y int, pods []int) bool {
-	if !isProperRoom(element, x, y) {
+	if element == 0 || !isProperRoom(element, x, y) {
 		return false
 	}
 	for py := HEIGHT - 1; py > y; py-- {
@@ -171,8 +171,7 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 					}
 				}
 				if freeway && cost_acc+(newy+podx-roomx)*current_element < *solution {
-					newpods := make([]int, WIDTH*HEIGHT)
-					copy(newpods, pods)
+					newpods := append(make([]int, 0, len(pods)), pods...)
 					newpods[podx+pody*WIDTH] = 0
 					newpods[roomx+newy*WIDTH] = current_element
 					moves = append(moves, State{pods: newpods, cost: cost_acc + (newy+podx-roomx)*current_element})
@@ -187,8 +186,7 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 					}
 				}
 				if freeway && cost_acc+(newy+roomx-podx)*current_element < *solution {
-					newpods := make([]int, WIDTH*HEIGHT)
-					copy(newpods, pods)
+					newpods := append(make([]int, 0, len(pods)), pods...)
 					newpods[podx+pody*WIDTH] = 0
 					newpods[roomx+newy*WIDTH] = current_element
 					moves = append(moves, State{pods: newpods, cost: cost_acc + (newy+roomx-podx)*current_element})
@@ -214,8 +212,7 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 				break
 			}
 			if cost_acc+(pody+podx-x)*current_element < *solution {
-				newpods := make([]int, WIDTH*HEIGHT)
-				copy(newpods, pods)
+				newpods := append(make([]int, 0, len(pods)), pods...)
 				newpods[podx+pody*WIDTH] = 0
 				newpods[x] = current_element
 				moves = append(moves, State{pods: newpods, cost: cost_acc + (pody+podx-x)*current_element})
@@ -233,8 +230,7 @@ func getPossibleMoves(podx int, pody int, pods []int, cost_acc int, solution *in
 				break
 			}
 			if cost_acc+(pody+x-podx)*current_element < *solution {
-				newpods := make([]int, WIDTH*HEIGHT)
-				copy(newpods, pods)
+				newpods := append(make([]int, 0, len(pods)), pods...)
 				newpods[podx+pody*WIDTH] = 0
 				newpods[x] = current_element
 				moves = append(moves, State{pods: newpods, cost: cost_acc + (pody+x-podx)*current_element})
